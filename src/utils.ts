@@ -8,7 +8,7 @@ export interface ContextValue {
   services: ServiceMap;
   init: <State = {}>(service: Service<State>) => void;
   update: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => void;
-  servicesToUpdate?: string[];
+  servicesToUpdate: string[] | null;
 }
 
 export const RServiceContext: Context<ContextValue> = createContext({} as ContextValue, calculateChangedBits);

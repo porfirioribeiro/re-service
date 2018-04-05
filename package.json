@@ -18,7 +18,7 @@
     "react": "^16.3.1"
   },
   "scripts": {
-    "build": "microbundle && microbundle -i src/plugins.ts -o dist/plugins.js",
+    "build": "microbundle --target browser && microbundle -i src/plugins.ts -o dist/plugins.js",
     "dev": "microbundle -w",
     "sample": "parcel -d sample/react/dist sample/react/index.html"
   }
