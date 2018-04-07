@@ -1,4 +1,5 @@
 const serviceBitMaskMap = new Map<string, number>();
+let lastBitMask = 1;
 
 /**
  * Service class has to be overridden
@@ -60,7 +61,10 @@ export interface ServiceType<St = {}, Se extends Service<St> = Service<St>> {
 /** @internal Get or create the bitMask of this service */
 export function getServiceNameBitMask(serviceName: string): number {
   let mask = serviceBitMaskMap.get(serviceName);
-  if (!mask) serviceBitMaskMap.set(serviceName, (mask = (serviceBitMaskMap.size + 1) * 2));
+  if (!mask) {
+    serviceBitMaskMap.set(serviceName, (mask = lastBitMask));
+    lastBitMask *= 2;
+  }
   return mask;
 }
 
