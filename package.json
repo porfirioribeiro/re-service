@@ -1,12 +1,12 @@
 {
-  "name": "re-service",
+  "name": "rc-service",
   "version": "0.0.1",
-  "description": "React Easy Services",
+  "description": "React Context Services",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
   "types": "dist/index.d.ts",
   "author": "Porfirio Ribeiro<porfirioribeiro@gmail.com>",
-  "repository": "https://github.com/porfirioribeiro/re-service",
+  "repository": "https://github.com/porfirioribeiro/rc-service",
   "license": "MIT",
   "files": [
     "dist"

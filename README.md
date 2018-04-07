@@ -1,6 +1,6 @@
-# re-service
+# rc-service
 
-React Easy Services
+React Context Services
 
 Create services and subscribe to them with the new React context API
 
@@ -29,7 +29,7 @@ When you call setState to update state, the Context will verify the bitMask of t
 ## Other state management libs
 + unstated: https://github.com/jamiebuilds/unstated
 
-    The Api is inspired by unstated lib but they work different. Even tough unstated uses the new Context, it still uses a subscriber pattern and connects Subscribers directly to Containers (Service) while re-service connects Services to Providers that will use Context bitMask diff to update Subscribers
+    The Api is inspired by unstated lib but they work different. Even tough unstated uses the new Context, it still uses a subscriber pattern and connects Subscribers directly to Containers (Service) while rc-service connects Services to Providers that will use Context bitMask diff to update Subscribers
 + redux: https://github.com/reactjs/redux
 
     Probably the most used state management of react, created by Dan Abramov (@gaearon), it follows a different approach in a more pure programming way.
