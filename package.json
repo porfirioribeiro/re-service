@@ -1,6 +1,6 @@
 {
   "name": "rc-service",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React Context Services",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
@@ -12,7 +12,7 @@
     "dist"
   ],
   "mangle": {
-    "regex": "^(instances|onServiceUpdate|initService|updateService|servicesToUpdate|prevTo|observedBits|lastNode|renderChild|services)$"
+    "regex": "^(instances|onServiceUpdate|initService|updateService|servicesToUpdate|prevTo|observedBits|lastNode|renderChild|services|getBitMaskForServices|lastBitMask|serviceBitMaskMap)$"
   },
   "devDependencies": {
     "@types/react": "^16.3.8",
