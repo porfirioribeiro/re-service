@@ -1,6 +1,7 @@
 dist
 .cache
 .rpt2_cache
+mangle.json
 
 # Logs
 logs
