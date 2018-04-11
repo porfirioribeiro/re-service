@@ -24,15 +24,15 @@ export class Provider extends React.Component<ProviderProps, ContextValue> {
     /**
      * Called when a service is initialized and calls all plugins `init` method
      */
-    init: <State = {}>(service: Service<State>) => {
+    initService: <State = {}>(service: Service<State>) => {
       if (this.props.plugins) this.props.plugins.forEach(p => p.init(service as any));
     },
     /**
      * Called when a service is updated
      * Sets the `servicesToUpdate` state with the changed service and calls `update` on plugins
      */
-    update: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => {
-      this.setState(state => ({ servicesToUpdate: (state.servicesToUpdate || []).concat(service.serviceName) }));
+    updateService: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => {
+      this.setState(state => ({ servicesToUpdate: (state.servicesToUpdate || []).concat(service) }));
       if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
     }
   };

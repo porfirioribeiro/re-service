@@ -1,4 +1,4 @@
-const serviceBitMaskMap = new Map<string, number>();
+const serviceBitMaskMap = new WeakMap<Service, number>();
 let lastBitMask = 1;
 
 /**
@@ -11,7 +11,7 @@ export class Service<State = {}> {
   state!: State; // prettier-ignore
   readonly serviceName!: string;
   /** @internal */
-  update = (_service: Service<State>, _oldState: State, _changes: Partial<State>) => {};
+  onServiceUpdate?: (_service: Service<State>, _oldState: State, _changes: Partial<State>) => void;
   constructor() {}
 
   /** Set the state of this service and updates the Provider */
@@ -19,7 +19,7 @@ export class Service<State = {}> {
     if (changes) {
       const oldState = this.state;
       this.state = Object.assign({}, this.state, changes);
-      this.update(this, oldState, changes);
+      if (this.onServiceUpdate) this.onServiceUpdate(this, oldState, changes);
     }
   }
 
@@ -59,23 +59,18 @@ export interface ServiceType<St = {}, Se extends Service<St> = Service<St>> {
 }
 
 /** @internal Get or create the bitMask of this service */
-export function getServiceNameBitMask(serviceName: string): number {
-  let mask = serviceBitMaskMap.get(serviceName);
+export function getServiceBitMask(service: Service): number {
+  let mask = serviceBitMaskMap.get(service);
   if (!mask) {
-    serviceBitMaskMap.set(serviceName, (mask = lastBitMask));
+    serviceBitMaskMap.set(service, (mask = lastBitMask));
     lastBitMask *= 2;
   }
   return mask;
 }
 
 /** @internal Get bitMask for an array of services */
-export function getBitMaskForServices(serviceTypes: ServiceType[]): number {
-  return serviceTypes.reduce((mask, serviceType) => (mask |= getServiceNameBitMask(serviceType.serviceName)), 0);
-}
-
-/** @internal Get bitMask for an array of services */
-export function getBitMaskForServiceNames(serviceNames: string[]): number {
-  return serviceNames.reduce((mask, serviceName) => (mask |= getServiceNameBitMask(serviceName)), 0);
+export function getBitMaskForServices(services: Service[]): number {
+  return services.reduce((mask, serviceType) => (mask |= getServiceBitMask(serviceType)), 0);
 }
 
 export type ServiceMap = Map<ServiceType, Service>;
