@@ -20,8 +20,7 @@ export interface ProviderProps {
 export class Provider extends React.Component<ProviderProps, ContextValue> {
   state = {
     services: new Map(),
-    serviceBitMaskMap: new Map<Service, number>(),
-    servicesToUpdate: null,
+    changes: null,
     /**
      * Called when a service is initialized and calls all plugins `init` method
      */
@@ -33,27 +32,19 @@ export class Provider extends React.Component<ProviderProps, ContextValue> {
      * Sets the `servicesToUpdate` state with the changed service and calls `update` on plugins
      */
     updateService: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => {
-      this.setState(state => ({ servicesToUpdate: (state.servicesToUpdate || []).concat(service) }));
+      this.setState(state => ({ changes: (state.changes || []).concat(service) }));
       if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
     },
-
-    getBitMaskForServices: (services: Service[]): number => {
-      return services.reduce((mask, service) => {
-        let m = this.state.serviceBitMaskMap.get(service);
-        if (!m) this.state.serviceBitMaskMap.set(service, (m = 1 << this.state.serviceBitMaskMap.size));
-        return (mask |= m);
-      }, 0);
-    }
   };
 
   /** Only update  */
   shouldComponentUpdate(nextProps: ProviderProps, nextState: ContextValue) {
-    return nextProps !== this.props || !!nextState.servicesToUpdate;
+    return nextProps !== this.props || !!nextState.changes;
   }
 
   componentDidUpdate() {
     // Cleanup `servicesToUpdate`
-    if (this.state.servicesToUpdate) this.setState({ servicesToUpdate: null });
+    if (this.state.changes) this.setState({ changes: null });
     //todo Probably i could probably call update on plugins here passing an array with the modified services
   }
 

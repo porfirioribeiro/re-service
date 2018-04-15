@@ -7,6 +7,7 @@
 export class Service<State = {}> {
   state!: State; // prettier-ignore
   readonly serviceName!: string;
+  readonly serviceType!: ServiceType<State>;
   /** @internal */
   onServiceUpdate?: (_service: Service<State>, _oldState: State, _changes: Partial<State>) => void;
   constructor() {}
@@ -35,6 +36,7 @@ export class Service<State = {}> {
     //     }: serviceName is defined as an instance var and will be ignored. Instead, declare it as a static var.`
     //   );
 
+    (service as any).serviceType = serviceType;
     (service as any).serviceName = serviceType.serviceName;
 
     // Should only log this with process.env.NODE_ENV!=='production'
