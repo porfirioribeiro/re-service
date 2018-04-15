@@ -20,6 +20,7 @@ export interface ProviderProps {
 export class Provider extends React.Component<ProviderProps, ContextValue> {
   state = {
     services: new Map(),
+    serviceBitMaskMap: new Map<Service, number>(),
     servicesToUpdate: null,
     /**
      * Called when a service is initialized and calls all plugins `init` method
@@ -34,6 +35,14 @@ export class Provider extends React.Component<ProviderProps, ContextValue> {
     updateService: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => {
       this.setState(state => ({ servicesToUpdate: (state.servicesToUpdate || []).concat(service) }));
       if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
+    },
+
+    getBitMaskForServices: (services: Service[]): number => {
+      return services.reduce((mask, service) => {
+        let m = this.state.serviceBitMaskMap.get(service);
+        if (!m) this.state.serviceBitMaskMap.set(service, (m = 1 << this.state.serviceBitMaskMap.size));
+        return (mask |= m);
+      }, 0);
     }
   };
 

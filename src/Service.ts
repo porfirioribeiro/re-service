@@ -1,6 +1,3 @@
-const serviceBitMaskMap = new WeakMap<Service, number>();
-let lastBitMask = 1;
-
 /**
  * Service class has to be overridden
  * Sub classes of it should define their initial `state` object and the changing functions
@@ -56,21 +53,6 @@ export class Service<State = {}> {
 export interface ServiceType<St = {}, Se extends Service<St> = Service<St>> {
   new (): Se;
   serviceName: string;
-}
-
-/** @internal Get or create the bitMask of this service */
-export function getServiceBitMask(service: Service): number {
-  let mask = serviceBitMaskMap.get(service);
-  if (!mask) {
-    serviceBitMaskMap.set(service, (mask = lastBitMask));
-    lastBitMask *= 2;
-  }
-  return mask;
-}
-
-/** @internal Get bitMask for an array of services */
-export function getBitMaskForServices(services: Service[]): number {
-  return services.reduce((mask, serviceType) => (mask |= getServiceBitMask(serviceType)), 0);
 }
 
 export type ServiceMap = Map<ServiceType, Service>;

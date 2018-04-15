@@ -12,7 +12,7 @@
     "dist"
   ],
   "mangle": {
-    "regex": "^(instances|onServiceUpdate|initService|updateService|servicesToUpdate|prevTo|observedBits|lastNode|renderChild|services|getBitMaskForServices|lastBitMask|serviceBitMaskMap)$"
+    "regex": "^(instances|onServiceUpdate|initService|updateService|servicesToUpdate|prevTo|observedBits|lastNode|renderChild|services|getBitMaskForServices|serviceBitMaskMap)$"
   },
   "devDependencies": {
     "@types/react": "^16.3.10",

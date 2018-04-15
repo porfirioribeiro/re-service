@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Service, ServiceType, getBitMaskForServices } from './Service';
+import { Service, ServiceType } from './Service';
 import { RServiceContext, ContextValue } from './utils';
 
 export interface SubscribeProps {
@@ -28,7 +28,7 @@ export class Subscribe extends React.PureComponent<SubscribeProps, SubscribeStat
    * React 16.3 context has children as a function
    * This function is called with the current
    */
-  renderChild = ({ services, initService, updateService }: ContextValue) => {
+  renderChild = ({ services, initService, updateService, getBitMaskForServices }: ContextValue) => {
     //check if `to` changed and create instances if needed
     if (this.props.to !== this.prevTo) {
       this.prevTo = this.props.to;
@@ -41,14 +41,16 @@ export class Subscribe extends React.PureComponent<SubscribeProps, SubscribeStat
         instance.onServiceUpdate = updateService;
         return instance;
       });
+      /**
+       * As we are mapping the services bitmask with the instance we need access to the instances,
+       * And it can only be done after render so we will re-render again the Consumer now with the bits
+       */
       this.setState({ observedBits: getBitMaskForServices(this.instances) });
-    } else {
-      this.lastNode = this.props.render
-        ? this.props.render(...this.instances)
-        : typeof this.props.children === 'function' ? this.props.children(...this.instances) : this.props.children;
+      return this.lastNode;
     }
-    // It needs to do a 2 cycle render when the `to` changes so we keep a copy of the last rendered node, so we don't need to call render again
-    return this.lastNode;
+    return (this.lastNode = this.props.render
+      ? this.props.render(...this.instances)
+      : typeof this.props.children === 'function' ? this.props.children(...this.instances) : this.props.children);
   };
 
   render() {
