@@ -17,11 +17,11 @@
   version "16.3.2"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.3.2.tgz#8dd45796b33160c60ddf1de068f45729214668bb"
 
-"@types/react@^16.3.8":
-  version "16.3.8"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.3.8.tgz#40c7e4eca3f48783e4c4ccee26fc7f5a5a476d84"
+"@types/react@^16.3.10":
+  version "16.3.10"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.3.10.tgz#2f25eef83f7c7f6c51cea4c02660f727c75d3b33"
   dependencies:
-    csstype "^2.0.0"
+    csstype "^2.2.0"
 
 "@vue/component-compiler-utils@^1.0.0":
   version "1.0.0"
@@ -1390,9 +1390,9 @@ csso@~2.3.1:
     clap "^1.0.9"
     source-map "^0.5.3"
 
-csstype@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.1.0.tgz#4a84bba2717d06549f391ac4eb7651aa1b7d0976"
+csstype@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.2.0.tgz#1656ef97553ac53b77090844a2531c6660ebd902"
 
 dashdash@^1.12.0:
   version "1.14.1"
