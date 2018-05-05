@@ -18,6 +18,7 @@ export interface SubscribeState {
  * It will look for services specified on `to` in the Provider and create them if they don't exist
  */
 export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
+  static displayName = 'RCSubscribe';
   instances: Service<any>[] = [];
   needsUpdate = true;
   lastNode: React.ReactNode = null;
@@ -26,11 +27,11 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
    * React 16.3 context has children as a function
    * This function is called with the current
    */
-  renderChild = ({ services, initService, updateService }: ContextValue) => {
+  renderChild = ({ services, injectedServices, initService, updateService }: ContextValue) => {
     //check if `to` changed and create instances if needed
     if (this.needsUpdate) {
       this.instances = this.props.to.map(serviceType => {
-        let instance = services.get(serviceType);
+        let instance = (injectedServices && injectedServices.get(serviceType)) || services.get(serviceType);
         if (!instance) {
           instance = Service.create(serviceType, initService);
           services.set(serviceType, instance);

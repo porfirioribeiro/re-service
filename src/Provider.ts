@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { RServiceContext, ContextValue } from './utils';
-import { Service } from './Service';
+import { RServiceContext, ContextValue, emptyContext } from './utils';
+import { Service, ServiceType } from './Service';
 import { IServicePlugin } from './Plugin';
 
 export interface ProviderProps {
@@ -10,6 +10,10 @@ export interface ProviderProps {
    * when the service is created every time it is changed
    */
   plugins?: IServicePlugin[];
+  /**
+   * Inject services in the provider
+   */
+  inject?: Service[];
 }
 
 /**
@@ -18,14 +22,17 @@ export interface ProviderProps {
  * Updating only the components that are connected to the changed Service
  */
 export class Provider extends React.Component<ProviderProps, ContextValue> {
-  state = {
+  static displayName = 'RCProvider';
+  state: ContextValue = {
     services: new Map(),
     changes: null,
     /**
      * Called when a service is initialized and calls all plugins `init` method
      */
     initService: <State = {}>(service: Service<State>) => {
-      if (this.props.plugins) this.props.plugins.forEach(p => p.init(service as any));
+      (this.props.plugins || []).forEach(p => {
+        p.init(service as any);
+      });
     },
     /**
      * Called when a service is updated
@@ -36,6 +43,16 @@ export class Provider extends React.Component<ProviderProps, ContextValue> {
       if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
     }
   };
+
+  static getDerivedStateFromProps({ inject }: ProviderProps, prevState: ContextValue): Partial<ContextValue> | null {
+    return inject !== prevState.prevInject
+      ? {
+          prevInject: inject,
+          injectedServices:
+            inject && new Map(inject.map(service => [service.serviceType, service]) as [ServiceType, Service][])
+        }
+      : null;
+  }
 
   /** Only update  */
   shouldComponentUpdate(nextProps: ProviderProps, nextState: ContextValue) {
@@ -48,7 +65,21 @@ export class Provider extends React.Component<ProviderProps, ContextValue> {
     //todo Probably i could probably call update on plugins here passing an array with the modified services
   }
 
+  renderChild = (contextValue: ContextValue) =>
+    React.createElement(
+      RServiceContext.Provider,
+      {
+        value:
+          contextValue !== emptyContext
+            ? Object.assign({}, contextValue, { injectedServices: this.state.injectedServices })
+            : this.state
+      },
+      this.props.children
+    );
+
   render() {
-    return React.createElement(RServiceContext.Provider, { value: this.state }, this.props.children);
+    return React.createElement(RServiceContext.Consumer, {
+      children: this.renderChild
+    });
   }
 }

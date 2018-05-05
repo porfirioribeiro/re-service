@@ -1,8 +1,10 @@
 import * as React from 'react';
 
-import { Subscribe } from '../../dist';
+import { Subscribe, Provider, Service } from '../../dist';
 
 import { MyService, OtherService } from './services';
+
+const injectedService = Service.create(MyService);
 
 class Tester extends React.PureComponent {
   timeout: any;
@@ -53,6 +55,24 @@ export default class App extends React.Component {
             </Tester>
           )}
         />
+        <Provider inject={[injectedService]}>
+          <Subscribe
+            to={[MyService]}
+            render={(myService: MyService) => (
+              <Tester>
+                <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
+              </Tester>
+            )}
+          />
+          <Subscribe
+            to={[OtherService]}
+            render={(other: OtherService) => (
+              <Tester>
+                <button onClick={other.increment}>{'other ' + other.state.other}</button>
+              </Tester>
+            )}
+          />
+        </Provider>
         {/* Hello <RServiceContext.Consumer>{x => x.test}</RServiceContext.Consumer>
             <button onClick={_ => this.setState({ test: 'hello' })}>xxx</button> */}
       </div>

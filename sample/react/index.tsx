@@ -6,7 +6,7 @@ import { LogServicePlugin, PersistServicePlugin } from '../../dist/plugins';
 import App from './App';
 
 render(
-  <Provider plugins={[LogServicePlugin, PersistServicePlugin]}>
+  <Provider plugins={[LogServicePlugin]}>
     <App />
   </Provider>,
   document.getElementById('root')

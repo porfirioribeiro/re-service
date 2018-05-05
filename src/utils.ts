@@ -6,12 +6,15 @@ const calculateChangedBits = (_prev: ContextValue, next: ContextValue) =>
 
 export interface ContextValue {
   services: ServiceMap;
+  injectedServices?: ServiceMap;
+  prevInject?: Service[];  
   changes: Service[] | null;
   initService: <State = {}>(service: Service<State>) => void;
   updateService: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => void;
 }
 
-export const RServiceContext: Context<ContextValue> = createContext({} as ContextValue, calculateChangedBits);
+export const emptyContext = {} as ContextValue;
+export const RServiceContext: Context<ContextValue> = createContext(emptyContext, calculateChangedBits);
 
 const serviceBitMaskMap = new Map<Service, number>();
 
