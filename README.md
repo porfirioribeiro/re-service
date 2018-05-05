@@ -71,5 +71,5 @@ class App extends React.Component {
 
 ## Todo
 
-* [ ] Unit tests
-* [ ] Inject Services
+* [x] Unit tests
+* [x] Inject Services
