@@ -2,15 +2,22 @@ import { Context, createContext } from 'react';
 import { ServiceMap, Service } from './Service';
 
 const calculateChangedBits = (_prev: ContextValue, next: ContextValue) =>
-  next.changes ? next.getBitMaskForServices(next.changes) : 0;
+  next.changes ? getBitMaskForServices(next.changes) : 0;
 
 export interface ContextValue {
   services: ServiceMap;
-  serviceBitMaskMap: Map<Service, number>;
   changes: Service[] | null;
-  getBitMaskForServices: (services: Service[]) => number;
   initService: <State = {}>(service: Service<State>) => void;
   updateService: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => void;
 }
 
 export const RServiceContext: Context<ContextValue> = createContext({} as ContextValue, calculateChangedBits);
+
+const serviceBitMaskMap = new Map<Service, number>();
+
+export const getBitMaskForServices = (services: Service[]): number =>
+  services.reduce((mask, service) => {
+    let m = serviceBitMaskMap.get(service);
+    if (!m) serviceBitMaskMap.set(service, (m = 1 << serviceBitMaskMap.size));
+    return (mask |= m);
+  }, 0);

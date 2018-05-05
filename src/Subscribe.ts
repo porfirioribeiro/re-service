@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Service, ServiceType } from './Service';
-import { RServiceContext, ContextValue } from './utils';
+import { RServiceContext, ContextValue, getBitMaskForServices } from './utils';
 
 export interface SubscribeProps {
   to: ServiceType[];
@@ -26,7 +26,7 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
    * React 16.3 context has children as a function
    * This function is called with the current
    */
-  renderChild = ({ services, initService, updateService, getBitMaskForServices }: ContextValue) => {
+  renderChild = ({ services, initService, updateService }: ContextValue) => {
     //check if `to` changed and create instances if needed
     if (this.needsUpdate) {
       this.instances = this.props.to.map(serviceType => {
