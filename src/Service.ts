@@ -24,9 +24,10 @@ export class Service<State = {}> {
   /** Create a Service and initializes it */
   static create<State, Se extends Service<State>>(
     serviceType: ServiceType<State, Se>,
-    init?: (service: Se) => void
+    serviceName?: string,
+    ...args: any[]
   ): Se {
-    const service = new serviceType();
+    const service = new serviceType(...args);
     // Should only log this with process.env.NODE_ENV!=='production'
     // Also, if using typescript it is already mandatory
     // if (service.serviceName)
@@ -37,7 +38,7 @@ export class Service<State = {}> {
     //   );
 
     (service as any).serviceType = serviceType;
-    (service as any).serviceName = serviceType.serviceName;
+    (service as any).serviceName = serviceName || serviceType.serviceName;
 
     // Should only log this with process.env.NODE_ENV!=='production'
     // if (service.state === undefined)
@@ -46,14 +47,12 @@ export class Service<State = {}> {
     //   );
 
     // Object.freeze(service.state); todo freeze state in development mode
-
-    if (init) init(service);
     return service;
   }
 }
 
 export interface ServiceType<St = {}, Se extends Service<St> = Service<St>> {
-  new (): Se;
+  new (...args: any[]): Se;
   serviceName: string;
 }
 

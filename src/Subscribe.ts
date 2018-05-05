@@ -33,7 +33,8 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
       this.instances = this.props.to.map(serviceType => {
         let instance = (injectedServices && injectedServices.get(serviceType)) || services.get(serviceType);
         if (!instance) {
-          instance = Service.create(serviceType, initService);
+          instance = Service.create(serviceType);
+          initService(instance)
           services.set(serviceType, instance);
         }
         instance.onServiceUpdate = updateService;
