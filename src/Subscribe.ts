@@ -5,8 +5,8 @@ import { RServiceContext, ContextValue, getBitMaskForServices } from './utils';
 
 export interface SubscribeProps {
   to: ServiceType[];
-  render?: (...instances: Service[]) => React.ReactNode;
-  children?: (...instances: Service[]) => React.ReactNode;
+  render?: (...instances: any[]) => React.ReactNode;
+  children?: (...instances: any[]) => React.ReactNode;
   pure?: boolean;
 }
 
@@ -48,8 +48,9 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
       /**
        * We cache last rendered node, at the first render this will be null
        * We only want to actually render the children after we assign observedBits to the Consumer
+       * Also we only do it if not running in SSR
        */
-      return this.lastNode;
+      if ((global as any).window) return this.lastNode;
     }
 
     return (this.lastNode = this.props.render
