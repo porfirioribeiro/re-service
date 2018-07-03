@@ -7,6 +7,7 @@ export interface SubscribeProps {
   to: ServiceType[];
   render?: (...instances: Service[]) => React.ReactNode;
   children?: (...instances: Service[]) => React.ReactNode;
+  pure?: boolean;
 }
 
 export interface SubscribeState {
@@ -19,10 +20,12 @@ export interface SubscribeState {
  */
 export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
   static displayName = 'RCSubscribe';
+  static defaultProps = { pure: true };
   instances: Service<any>[] = [];
   needsUpdate = true;
   lastNode: React.ReactNode = null;
   state: SubscribeState = {};
+  observedBits?: number;
   /**
    * React 16.3 context has children as a function
    * This function is called with the current
@@ -34,14 +37,14 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
         let instance = (injectedServices && injectedServices.get(serviceType)) || services.get(serviceType);
         if (!instance) {
           instance = Service.create(serviceType);
-          initService(instance)
+          initService(instance);
           services.set(serviceType, instance);
         }
         instance.onServiceUpdate = updateService;
         return instance;
       });
       // Calculate the bits we want to observe so this component will only be updated when the subscribed services update
-      this.setState({ observedBits: getBitMaskForServices(this.instances) });
+      this.observedBits = getBitMaskForServices(this.instances);
       /**
        * We cache last rendered node, at the first render this will be null
        * We only want to actually render the children after we assign observedBits to the Consumer
@@ -60,12 +63,19 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
    * Only re-render this component if `to` changed or if we are in setting observedBits phase.
    */
   shouldComponentUpdate(nextProps: SubscribeProps, nextState: SubscribeState) {
-    return (
-      (this.needsUpdate =
-        !this.props.to ||
-        this.props.to.length !== nextProps.to.length ||
-        nextProps.to.some((s, i) => s !== this.props.to![i])) || nextState !== this.state
-    );
+    this.needsUpdate =
+      !this.props.to ||
+      this.props.to.length !== nextProps.to.length ||
+      nextProps.to.some((s, i) => s !== this.props.to![i]);
+    return this.props.pure ? this.needsUpdate || nextState !== this.state : true;
+  }
+
+  componentDidMount() {
+    if (this.observedBits) this.setState({ observedBits: this.observedBits });
+  }
+
+  componentDidUpdate() {
+    if (this.observedBits !== this.state.observedBits) this.setState({ observedBits: this.observedBits });
   }
 
   render() {
