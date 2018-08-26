@@ -1,12 +1,12 @@
-import * as React from 'react';
+import { Component, createElement, ReactNode } from 'react';
 
 import { Service, ServiceType } from './Service';
 import { RServiceContext, ContextValue, getBitMaskForServices } from './utils';
 
 export interface SubscribeProps {
   to: ServiceType[];
-  render?: (...instances: any[]) => React.ReactNode;
-  children?: (...instances: any[]) => React.ReactNode;
+  render?: (...instances: any[]) => ReactNode;
+  children?: (...instances: any[]) => ReactNode;
   pure?: boolean;
 }
 
@@ -18,12 +18,12 @@ export interface SubscribeState {
  * Subscribe component acts as a connection to the Provider services
  * It will look for services specified on `to` in the Provider and create them if they don't exist
  */
-export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
+export class Subscribe extends Component<SubscribeProps, SubscribeState> {
   static displayName = 'RCSubscribe';
   static defaultProps = { pure: true };
   instances: Service<any>[] = [];
   needsUpdate = true;
-  lastNode: React.ReactNode = null;
+  lastNode: ReactNode = null;
   state: SubscribeState = {};
   observedBits?: number;
   /**
@@ -67,7 +67,7 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
     this.needsUpdate =
       !this.props.to ||
       this.props.to.length !== nextProps.to.length ||
-      nextProps.to.some((s, i) => s !== this.props.to![i]);
+      nextProps.to.some((s, i) => s !== this.props.to[i]);
     return this.props.pure ? this.needsUpdate || nextState !== this.state : true;
   }
 
@@ -80,7 +80,7 @@ export class Subscribe extends React.Component<SubscribeProps, SubscribeState> {
   }
 
   render() {
-    return React.createElement(RServiceContext.Consumer, {
+    return createElement(RServiceContext.Consumer, {
       unstable_observedBits: this.state.observedBits,
       children: this.renderChild
     });

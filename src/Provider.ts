@@ -1,10 +1,10 @@
-import * as React from 'react';
+import { Component, createElement, ReactNode } from 'react';
 import { RServiceContext, ContextValue, emptyContext } from './utils';
 import { Service, ServiceType } from './Service';
 import { IServicePlugin } from './Plugin';
 
 export interface ProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
   /**
    * You can pass a array of plugin objects that can be used to do something
    * when the service is created every time it is changed
@@ -21,7 +21,7 @@ export interface ProviderProps {
  * It's responsible to update it's indirect child Subscribe components
  * Updating only the components that are connected to the changed Service
  */
-export class Provider extends React.Component<ProviderProps, ContextValue> {
+export class Provider extends Component<ProviderProps, ContextValue> {
   static displayName = 'RCProvider';
   state: ContextValue = {
     services: new Map(),
@@ -66,7 +66,7 @@ export class Provider extends React.Component<ProviderProps, ContextValue> {
   }
 
   renderChild = (contextValue: ContextValue) =>
-    React.createElement(
+    createElement(
       RServiceContext.Provider,
       {
         value:
@@ -78,7 +78,7 @@ export class Provider extends React.Component<ProviderProps, ContextValue> {
     );
 
   render() {
-    return React.createElement(RServiceContext.Consumer, {
+    return createElement(RServiceContext.Consumer, {
       children: this.renderChild
     });
   }
