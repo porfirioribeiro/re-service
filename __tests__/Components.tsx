@@ -1,9 +1,18 @@
 import * as React from 'react';
-import { render, Simulate, wait } from 'react-testing-library';
+import { render, fireEvent, wait, GetByAttribute } from 'react-testing-library';
 // this add custom expect matchers from dom-testing-library
-import 'dom-testing-library/extend-expect';
 
 import { Service, Provider, Subscribe } from '../src';
+
+function click(el: HTMLElement) {
+  fireEvent(
+    el,
+    new MouseEvent('click', {
+      bubbles: true, // click events must bubble for React to see it
+      cancelable: true
+    })
+  );
+}
 
 export class MyService extends Service {
   static serviceName = 'MyService';
@@ -38,12 +47,12 @@ describe('Provider', () => {
       </Provider>
     );
     expect(p.getByTestId('value')).toHaveTextContent('10');
-    Simulate.click(p.getByTestId('increment'));
+    click(p.getByTestId('increment'));
     expect(p.getByTestId('value')).toHaveTextContent('11');
-    Simulate.click(p.getByTestId('decrement'));
+    click(p.getByTestId('decrement'));
     expect(p.getByTestId('value')).toHaveTextContent('10');
   });
-  
+
   it('Provider with inject', () => {
     const myService = Service.create(MyService);
 
@@ -54,10 +63,10 @@ describe('Provider', () => {
     );
     expect(p.getByTestId('value')).toHaveTextContent('10');
     expect(myService.state.value).toBe(10);
-    Simulate.click(p.getByTestId('increment'));
+    click(p.getByTestId('increment'));
     expect(p.getByTestId('value')).toHaveTextContent('11');
     expect(myService.state.value).toBe(11);
-    Simulate.click(p.getByTestId('decrement'));
+    click(p.getByTestId('decrement'));
     expect(p.getByTestId('value')).toHaveTextContent('10');
     expect(myService.state.value).toBe(10);
   });
