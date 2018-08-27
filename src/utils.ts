@@ -1,4 +1,6 @@
-import { Context, createContext } from 'react';
+import { createContext } from 'react';
+// @ts-ignore  - Typings
+import { Context } from 'react';
 import { ServiceMap, Service } from './Service';
 
 const calculateChangedBits = (_prev: ContextValue, next: ContextValue) =>
@@ -7,14 +9,14 @@ const calculateChangedBits = (_prev: ContextValue, next: ContextValue) =>
 export interface ContextValue {
   services: ServiceMap;
   injectedServices?: ServiceMap;
-  prevInject?: Service[];  
+  prevInject?: Service[];
   changes: Service[] | null;
   initService: <State = {}>(service: Service<State>) => void;
   updateService: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => void;
 }
 
 export const emptyContext = {} as ContextValue;
-export const RServiceContext: Context<ContextValue> = createContext(emptyContext, calculateChangedBits);
+export const RServiceContext = createContext<ContextValue>(emptyContext, calculateChangedBits);
 
 const serviceBitMaskMap = new Map<Service, number>();
 

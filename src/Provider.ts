@@ -1,9 +1,12 @@
 import { Component, createElement, ReactNode } from 'react';
+// @ts-ignore  - Typings
+import { ProviderProps, ConsumerProps, ReactElement } from 'react';
+
 import { RServiceContext, ContextValue, emptyContext } from './utils';
 import { Service, ServiceType } from './Service';
 import { IServicePlugin } from './Plugin';
 
-export interface ProviderProps {
+export interface IProviderProps {
   children: ReactNode;
   /**
    * You can pass a array of plugin objects that can be used to do something
@@ -21,7 +24,7 @@ export interface ProviderProps {
  * It's responsible to update it's indirect child Subscribe components
  * Updating only the components that are connected to the changed Service
  */
-export class Provider extends Component<ProviderProps, ContextValue> {
+export class Provider extends Component<IProviderProps, ContextValue> {
   static displayName = 'RCProvider';
   state: ContextValue = {
     services: new Map(),
@@ -44,7 +47,7 @@ export class Provider extends Component<ProviderProps, ContextValue> {
     }
   };
 
-  static getDerivedStateFromProps({ inject }: ProviderProps, prevState: ContextValue): Partial<ContextValue> | null {
+  static getDerivedStateFromProps({ inject }: IProviderProps, prevState: ContextValue): Partial<ContextValue> | null {
     return inject !== prevState.prevInject
       ? {
           prevInject: inject,
@@ -55,7 +58,7 @@ export class Provider extends Component<ProviderProps, ContextValue> {
   }
 
   /** Only update  */
-  shouldComponentUpdate(nextProps: ProviderProps, nextState: ContextValue) {
+  shouldComponentUpdate(nextProps: IProviderProps, nextState: ContextValue) {
     return nextProps !== this.props || !!nextState.changes;
   }
 
