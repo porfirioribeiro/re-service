@@ -10,7 +10,8 @@
   "repository": "https://github.com/porfirioribeiro/rc-service",
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "mangle": {
     "regex": "^(instances|onServiceUpdate|getBitMaskForServices|serviceBitMaskMap|observedBits|lastNode|initService|updateService|needsUpdate|renderChild|prevInject)$"
