@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "./es6",
+    "outDir": "./es6",
+    "target": "es6",
+    "moduleResolution": "node"
+  }
+}

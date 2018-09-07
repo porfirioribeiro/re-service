@@ -11,6 +11,7 @@
   "license": "MIT",
   "files": [
     "dist",
+    "es6",
     "src"
   ],
   "mangle": {
@@ -35,9 +36,11 @@
     "react": "^16.4.2"
   },
   "scripts": {
-    "clean": "rimraf dist .cache .rpt2_cache sample/react/dist",
+    "clean": "rimraf dist es6 .cache .rpt2_cache sample/react/dist",
     "test": "jest",
-    "build": "microbundle --target browser && microbundle -i src/plugins.ts -o dist/plugins.js",
+    "build:es6": "tsc -p tsconfig.es6.json",
+    "build:mb": "microbundle --target browser && microbundle -i src/plugins.ts -o dist/plugins.js",
+    "build": "yarn build:es6 && yarn build:mb",
     "dev": "microbundle -w",
     "sample": "parcel -d sample/react/dist sample/react/index.html",
     "prepublish": "yarn clean && yarn build"
