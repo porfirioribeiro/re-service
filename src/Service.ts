@@ -1,3 +1,5 @@
+import { UpdateServiceFunction, UpdateServiceCallback } from './utils';
+
 /**
  * Service class has to be overridden
  * Sub classes of it should define their initial `state` object and the changing functions
@@ -9,16 +11,28 @@ export class Service<State = {}> {
   readonly serviceName!: string;
   readonly serviceType!: ServiceType<State>;
   /** @internal */
-  onServiceUpdate?: (_service: Service<State>, _oldState: State, _changes: Partial<State>) => void;
+  onServiceUpdate?: UpdateServiceFunction;
   constructor() {}
 
+  /**
+   * Set the state of this service and updates the Provider
+   * It will return a Promise you can use to execute something after the state
+   * is set on the provider
+   */
+  setState(changes: Partial<State>, promise: true): Promise<void>;
   /** Set the state of this service and updates the Provider */
-  setState(changes?: Partial<State>) {
-    if (changes) {
-      const oldState = this.state;
-      this.state = Object.assign({}, this.state, changes);
-      if (this.onServiceUpdate) this.onServiceUpdate(this, oldState, changes);
-    }
+  setState(changes: Partial<State>, callback?: UpdateServiceCallback): void;
+  setState(changes: Partial<State>, pcb?: boolean | UpdateServiceCallback): Promise<void> | void {
+    return pcb === true
+      ? new Promise(resolve => this.updateState(changes, resolve))
+      : this.updateState(changes, pcb || undefined);
+  }
+
+  updateState(changes: Partial<State>, callback?: UpdateServiceCallback) {
+    const oldState = this.state;
+    this.state = Object.assign({}, this.state, changes);
+    if (this.onServiceUpdate) this.onServiceUpdate(this, oldState, changes, callback);
+    else if (callback) callback();
   }
 
   /** Create a Service and initializes it */

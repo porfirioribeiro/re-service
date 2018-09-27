@@ -41,8 +41,8 @@ export class Provider extends Component<IProviderProps, ContextValue> {
      * Called when a service is updated
      * Sets the `servicesToUpdate` state with the changed service and calls `update` on plugins
      */
-    updateService: <State = {}>(service: Service, prevState: State, changes: Partial<State>) => {
-      this.setState(state => ({ changes: (state.changes || []).concat(service) }));
+    updateService: (service, prevState, changes, callback) => {
+      this.setState(state => ({ changes: (state.changes || []).concat(service) }), callback);
       if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
     }
   };
