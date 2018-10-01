@@ -20,12 +20,12 @@ export class Service<State = {}> {
    * is set on the provider
    */
   setState(changes: Partial<State>, promise: true, reset?: boolean): Promise<void>;
-  setState(changes: State, promise: true, reset: true): Promise<void>;
+  setState(state: State, promise: true, reset: true): Promise<void>;
   /** Set the state of this service and updates the Provider */
   setState(changes: Partial<State>, callback?: UpdateServiceCallback, reset?: boolean): void;
-  setState(changes: State, callback: UpdateServiceCallback | undefined, reset: true): void;
+  setState(state: State, callback: UpdateServiceCallback | undefined, reset: true): void;
   setState(changes: Partial<State>, pcb?: true | UpdateServiceCallback, reset?: boolean): Promise<void> | void {
-    const state = reset ? Object.assign({}, this.state, changes) : (changes as State);
+    const state = !reset ? Object.assign({}, this.state, changes) : (changes as State);
     return pcb === true
       ? new Promise(resolve => this.updateState(state, changes, resolve))
       : this.updateState(state, changes, pcb || undefined);
