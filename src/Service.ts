@@ -19,18 +19,21 @@ export class Service<State = {}> {
    * It will return a Promise you can use to execute something after the state
    * is set on the provider
    */
-  setState(changes: Partial<State>, promise: true): Promise<void>;
+  setState(changes: Partial<State>, promise: true, reset?: boolean): Promise<void>;
+  setState(changes: State, promise: true, reset: true): Promise<void>;
   /** Set the state of this service and updates the Provider */
-  setState(changes: Partial<State>, callback?: UpdateServiceCallback): void;
-  setState(changes: Partial<State>, pcb?: boolean | UpdateServiceCallback): Promise<void> | void {
+  setState(changes: Partial<State>, callback?: UpdateServiceCallback, reset?: boolean): void;
+  setState(changes: State, callback: UpdateServiceCallback | undefined, reset: true): void;
+  setState(changes: Partial<State>, pcb?: true | UpdateServiceCallback, reset?: boolean): Promise<void> | void {
+    const state = reset ? Object.assign({}, this.state, changes) : (changes as State);
     return pcb === true
-      ? new Promise(resolve => this.updateState(changes, resolve))
-      : this.updateState(changes, pcb || undefined);
+      ? new Promise(resolve => this.updateState(state, changes, resolve))
+      : this.updateState(state, changes, pcb || undefined);
   }
 
-  updateState(changes: Partial<State>, callback?: UpdateServiceCallback) {
+  updateState(state: State, changes: Partial<State>, callback?: UpdateServiceCallback) {
     const oldState = this.state;
-    this.state = Object.assign({}, this.state, changes);
+    this.state = state;
     if (this.onServiceUpdate) this.onServiceUpdate(this, oldState, changes, callback);
     else if (callback) callback();
   }
