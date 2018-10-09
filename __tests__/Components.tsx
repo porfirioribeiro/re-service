@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { render, fireEvent, wait, GetByAttribute } from 'react-testing-library';
-// this add custom expect matchers from dom-testing-library
+import { render, fireEvent } from 'react-testing-library';
+// this adds custom jest matchers from jest-dom
+import 'jest-dom/extend-expect'
 
 import { Service, Provider, Subscribe } from '../src';
 

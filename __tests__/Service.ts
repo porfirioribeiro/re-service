@@ -1,4 +1,4 @@
-import { Service, Provider, Subscribe } from '../src';
+import { Service } from '../src';
 
 class Toggler extends Service<{ on: boolean }> {
   static serviceName = 'TogglerService';
@@ -37,7 +37,7 @@ describe('Service', () => {
   });
 
   it('creates a Service with parameters', () => {
-    const toggler = Service.create(Toggler, null, true);
+    const toggler = Service.create(Toggler, 'Toggler', true);
 
     expect(toggler.state.on).toBe(true);
   });
