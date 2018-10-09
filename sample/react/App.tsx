@@ -1,8 +1,9 @@
 import * as React from 'react';
 
-import { Subscribe, Provider, Service } from '../../dist';
+import { Subscribe, Provider, Service } from '../../es6';
 
 import { MyService, OtherService } from './services';
+import TodoList from './TodoList';
 
 const injectedService = Service.create(MyService);
 
@@ -23,39 +24,8 @@ class Tester extends React.PureComponent {
 export default class App extends React.Component {
   render() {
     return (
-      <div style={{ display: 'flex' }}>
-        <Subscribe
-          to={[MyService]}
-          render={(myService: MyService) => (
-            <Tester>
-              <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
-            </Tester>
-          )}
-        />
-        <Subscribe
-          to={[OtherService]}
-          render={(other: OtherService) => (
-            <Tester>
-              <button onClick={other.increment}>{'other ' + other.state.other}</button>
-            </Tester>
-          )}
-        />
-        <Subscribe
-          to={[MyService, OtherService]}
-          render={(myService: MyService, other: OtherService) => (
-            <Tester>
-              <button
-                onClick={() => {
-                  myService.increment();
-                  other.increment();
-                }}
-              >
-                {'myService ' + myService.state.value + ' other ' + other.state.other}
-              </button>
-            </Tester>
-          )}
-        />
-        <Provider inject={[injectedService]}>
+      <div>
+        <div style={{ display: 'flex' }}>
           <Subscribe
             to={[MyService]}
             render={(myService: MyService) => (
@@ -72,9 +42,45 @@ export default class App extends React.Component {
               </Tester>
             )}
           />
-        </Provider>
-        {/* Hello <RServiceContext.Consumer>{x => x.test}</RServiceContext.Consumer>
+          <Subscribe
+            to={[MyService, OtherService]}
+            render={(myService: MyService, other: OtherService) => (
+              <Tester>
+                <button
+                  onClick={() => {
+                    myService.increment();
+                    other.increment();
+                  }}
+                >
+                  {'myService ' + myService.state.value + ' other ' + other.state.other}
+                </button>
+              </Tester>
+            )}
+          />
+          <Provider inject={[injectedService]}>
+            <Subscribe
+              to={[MyService]}
+              render={(myService: MyService) => (
+                <Tester>
+                  <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
+                </Tester>
+              )}
+            />
+            <Subscribe
+              to={[OtherService]}
+              render={(other: OtherService) => (
+                <Tester>
+                  <button onClick={other.increment}>{'other ' + other.state.other}</button>
+                </Tester>
+              )}
+            />
+          </Provider>
+          {/* Hello <RServiceContext.Consumer>{x => x.test}</RServiceContext.Consumer>
             <button onClick={_ => this.setState({ test: 'hello' })}>xxx</button> */}
+        </div>
+        <div>
+          <TodoList />
+        </div>
       </div>
     );
   }
