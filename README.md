@@ -69,7 +69,66 @@ class App extends React.Component {
 }
 ```
 
-## Todo
+### serviceCache
 
-* [x] Unit tests
-* [x] Inject Services
+For make it easier to deal with fetch/store/read values, it was added a small helper.
+
+It works by creating a cache object that can be read many times but it's only fetched once.
+
+`createCache` accepts 3 functions (read, fetch, store)
+* `read(id)` should return the cached value for the id
+* `fetch(id)` should return Promise resolving the value of the id
+* `store(data, id)` should store the resolved data into id
+
+### Example Service for storing and fetch todo's 
+`TodoService.ts`
+```javascript
+import { Service } from 'rc-service';
+import { createCache } from 'rc-service/serviceCache';
+
+const apiURL = 'https://jsonplaceholder.typicode.com/todos';
+/** fetch the todo from API */
+const getTodo = (id: number) => fetch(`${apiURL}/${id}`).then(r => r.json()) as Promise<Todo>;
+
+/** shape of the Todo object returned by the API*/
+interface Todo {
+  id: number;
+  title: string;
+}
+
+export class TodoService extends Service<{todos: Record<number, Todo>}> {
+  static serviceName = 'TodoService';
+  state = {
+    todos: {}
+  };
+
+  /**
+   * Creates the cache using number as its key type and Todo as Value type 
+   */
+  todo = createCache<number, Todo>(
+    /*read*/ id => this.state.todos[id],
+    /*fetch*/ id => getTodo(id),
+    /*store*/ (todo, id) => this.setState({ todos: { ...this.state.todos, [id]: todo } })
+  );
+}
+
+```
+`Todo.tsx`
+```tsx
+import React from 'react';
+import { Subscribe } from 'rc-service';
+import { TodoService } from './TodoService';
+
+const Todo = () => (
+  <Subscribe
+    to={[TodoService]}
+    render={(todoService: TodoService) => {
+      // For this example it just reads a static todo id
+      const todo = todoService.todo.read(1);
+      return <div>{todo.value ? todo.value.title : 'Loading'}</div>;
+    }}
+  />
+);
+
+export default Todo;
+```
