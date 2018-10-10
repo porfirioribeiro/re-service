@@ -20,13 +20,10 @@
   "devDependencies": {
     "@types/jest": "^23.3.5",
     "@types/react": "^16.4.16",
-    "@types/react-dom": "^16.0.9",
     "jest": "^23.6.0",
     "jest-dom": "^2.0.4",
     "microbundle": "^0.6.0",
-    "parcel-bundler": "^1.10.2",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2",
     "react-testing-library": "^5.2.0",
     "rimraf": "^2.6.2",
     "ts-jest": "^23.10.4",
@@ -36,15 +33,14 @@
     "react": "^16.4.2"
   },
   "scripts": {
-    "clean": "rimraf dist es6 .cache .rpt2_cache sample/react/dist",
+    "clean": "rimraf dist es6 .rpt2_cache sample/.cache sample/dist",
     "test": "jest",
     "build:es6": "tsc -p tsconfig.es6.json",
     "build:mb": "yarn build:mb:main && yarn build:mb:plugins",
     "build:mb:main": "microbundle --target browser",
     "build:mb:plugins": "microbundle -i src/plugins.ts -o dist/plugins.js",
     "build": "yarn build:es6 && yarn build:mb",
-    "dev": "microbundle -w",
-    "sample": "parcel -d sample/react/dist sample/react/index.html",
+    "dev": "tsc -p tsconfig.es6.json -w",
     "prepublish": "yarn clean && yarn build"
   },
   "jest": {

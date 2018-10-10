@@ -1,4 +1,4 @@
-import { Service } from '../../es6';
+import { Service } from '../es6';
 
 export class MyService extends Service {
   static serviceName = 'MyService';
