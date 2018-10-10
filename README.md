@@ -75,10 +75,20 @@ For make it easier to deal with fetch/store/read values, it was added a small he
 
 It works by creating a cache object that can be read many times but it's only fetched once.
 
-`createCache` accepts 3 functions (read, fetch, store)
-* `read(id)` should return the cached value for the id
-* `fetch(id)` should return Promise resolving the value of the id
-* `store(data, id)` should store the resolved data into id
+`createCache` accepts 3 functions (read, fetch, store) and optional options
+* `read(key)` should return the cached value for the key
+* `fetch(key)` should return Promise resolving the value of the key
+* `store(data, key)` should store the resolved data into key
+* `{cacheFirst, hash}` options
+  * `cacheFirst` strategy will call `read` first and if it has value, return it and not call `fetch`, useful when you have more than one cache writing to the same state object, like todoList and todo. todoList will fetch all todo's so when we read todo we already have the todo stored, no need to fetch again.
+  * `hash` function that returns a string with a hash of the key. It has a default implementation that works for most simple cases, if you have a key that didn't work with it, implement your own
+
+It returns an object with 3 methods {`read`, `load`, `invalidate`}
+* `read(key?)` `read` the cache or `fetch` and `store`, returns {`value`, `loading`, `error`, `promise`}
+* `load(key?)` `fetch` and `store` data
+* `invalidate()` clears the internal resource cache. Next call's will have to re-`fetch`
+
+
 
 ### Example Service for storing and fetch todo's 
 `TodoService.ts`
