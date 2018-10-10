@@ -132,3 +132,15 @@ const Todo = () => (
 
 export default Todo;
 ```
+
+When the Todo components render the first time it will try to read from todo
+Has it was not loaded yet it will return a object with a empty value
+and we can display a loading...
+But it will trigger the fetch function and when it resolves it calls the store function
+As store function is calling `setState` on the Service, it will make the Subscribe'd components
+to update. So our Todo component will render again and now the read function knows we have the value,
+it calls the `read` from the `createCache` that will return our value from Service state, 
+so now the Todo will render the title of the fetched Todo.
+
+If we had other components Subscribe'd to the `TodoService` and reading the same Todo, it will return from
+the cache and not fetch again.
