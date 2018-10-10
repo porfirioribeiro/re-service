@@ -12,7 +12,10 @@ interface ReadObject<V> {
   promise?: PromiseLike<V>;
 }
 
-type CreateCacheOptions = { hash?: HashFunction };
+interface CreateCacheOptions {
+  hash?: HashFunction;
+  cacheFirst?: boolean;
+}
 
 const Empty = 0;
 const Pending = 1;
@@ -25,10 +28,12 @@ type CacheType<K, V> = K extends null | undefined
   ? {
       read(key?: K): ReadObject<V>;
       load(key?: K): PromiseLike<V>;
+      invalidate(): void;
     }
   : {
       read(key: K): ReadObject<V>;
       load(key: K): PromiseLike<V>;
+      invalidate(): void;
     };
 
 export const createCache = <K extends HashPrimitive, V>(
@@ -44,15 +49,24 @@ export const createCache = <K extends HashPrimitive, V>(
       const hashedKey = hash(key);
       let resource = resourceMap.get(hashedKey);
       let promise: PromiseLike<V> | undefined = undefined;
+      let value = undefined;
       if (!resource) {
-        promise = (this as CacheType<any, V>).load(key);
-        resource = resourceMap.get(hashedKey);
+        if (o.cacheFirst) {
+          value = read(key);
+          if (value) resourceMap.set(hashedKey, (resource = Resolved));
+        }
+        if (!value) {
+          promise = (this as CacheType<any, V>).load(key);
+          resource = resourceMap.get(hashedKey);
+        }
+      } else {
+        value = resource === Resolved ? read(key) : undefined;
       }
       return {
         loading: resource === Pending,
         promise,
         error: resource === Rejected,
-        value: resource === Resolved ? read(key) : undefined
+        value
       };
     },
     load(key: K) {
@@ -66,6 +80,9 @@ export const createCache = <K extends HashPrimitive, V>(
         },
         () => resourceMap.set(hashedKey, Rejected)
       ) as PromiseLike<V>;
+    },
+    invalidate() {
+      resourceMap.clear();
     }
   } as CacheType<K, V>;
 };
