@@ -1,5 +1,4 @@
-import { Service } from '../../es6';
-import { createCache } from '../../es6/serviceCache';
+import { Service, createCache } from '../../es6';
 
 const apiURL = 'https://jsonplaceholder.typicode.com/todos';
 const getTodo = (id: number) => fetch(`${apiURL}/${id}`).then(r => r.json()) as Promise<Todo>;

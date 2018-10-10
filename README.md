@@ -83,8 +83,7 @@ It works by creating a cache object that can be read many times but it's only fe
 ### Example Service for storing and fetch todo's 
 `TodoService.ts`
 ```javascript
-import { Service } from 'rc-service';
-import { createCache } from 'rc-service/serviceCache';
+import { Service, createCache } from 'rc-service';
 
 const apiURL = 'https://jsonplaceholder.typicode.com/todos';
 /** fetch the todo from API */
