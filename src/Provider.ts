@@ -17,6 +17,10 @@ export interface IProviderProps {
    * Inject services in the provider
    */
   inject?: Service[];
+  /**
+   * This provider is the root provider, will not try to Subscribe to parent Provider's
+   */
+  root?: boolean;
 }
 
 /**
@@ -81,8 +85,10 @@ export class Provider extends Component<IProviderProps, ContextValue> {
     );
 
   render() {
-    return createElement(RServiceContext.Consumer, {
-      children: this.renderChild
-    });
+    return this.props.root
+      ? this.renderChild(emptyContext)
+      : createElement(RServiceContext.Consumer, {
+          children: this.renderChild
+        });
   }
 }
