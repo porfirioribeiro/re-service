@@ -1,4 +1,4 @@
 export { Provider } from './Provider';
 export { Service } from './Service';
 export { Subscribe } from './Subscribe';
-export { createCache } from './serviceCache/index';
+export { createCache, CacheType } from './serviceCache/index';

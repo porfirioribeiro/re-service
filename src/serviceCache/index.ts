@@ -5,26 +5,26 @@ type ReadFN<K, V> = (key: K) => V;
 type FetchFn<K, V> = (key: K) => PromiseLike<V>;
 type StoreFn<K, V> = (value: V, key: K) => void;
 
-interface ReadObject<V> {
+export interface ReadObject<V> {
   value?: V;
   loading?: boolean;
   error?: boolean;
   promise?: PromiseLike<V>;
 }
 
-interface CreateCacheOptions {
+export interface CreateCacheOptions {
   hash?: HashFunction;
   cacheFirst?: boolean;
 }
 
-const Empty = 0;
-const Pending = 1;
-const Resolved = 2;
-const Rejected = 3;
+export const Empty = 0;
+export const Pending = 1;
+export const Resolved = 2;
+export const Rejected = 3;
 
-type LoadState = typeof Empty | typeof Pending | typeof Resolved | typeof Rejected;
+export type LoadState = typeof Empty | typeof Pending | typeof Resolved | typeof Rejected;
 
-type CacheType<K, V> = K extends null | undefined
+export type CacheType<K, V> = K extends null | undefined
   ? {
       read(key?: K): ReadObject<V>;
       load(key?: K): PromiseLike<V>;
