@@ -18,20 +18,20 @@
     "regex": "^(instances|onServiceUpdate|getBitMaskForServices|serviceBitMaskMap|observedBits|lastNode|initService|updateService|needsUpdate|renderChild|prevInject)$"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.7",
+    "@types/jest": "^23.3.8",
     "@types/react": "^16.4.18",
     "jest": "^23.6.0",
     "jest-dom": "^2.1.0",
-    "microbundle": "^0.6.0",
-    "react": "^16.6.0",
-    "react-dom": "^16.6.0",
-    "react-testing-library": "^5.2.1",
+    "microbundle": "^0.7.0",
+    "react": "16.7.0-alpha.0",
+    "react-dom": "16.7.0-alpha.0",
+    "react-testing-library": "^5.2.3",
     "rimraf": "^2.6.2",
     "ts-jest": "^23.10.4",
     "typescript": "^3.1.3"
   },
   "peerDependencies": {
-    "react": "^16.4.2"
+    "react": "16.7.0-alpha.0"
   },
   "scripts": {
     "clean": "rimraf dist es6 .rpt2_cache sample/.cache sample/dist",
