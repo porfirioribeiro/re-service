@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
-import { Subscribe, Service, Provider } from '../es6';
+import { Subscribe, Service, Provider } from 'rc-service';
 import { MyService, OtherService } from './services';
 
 const injectedService = Service.create(MyService);

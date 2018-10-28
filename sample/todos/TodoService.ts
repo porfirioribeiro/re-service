@@ -1,4 +1,4 @@
-import { Service, createCache } from '../../es6';
+import { Service, createCache } from 'rc-service';
 import { Normalized, normalizeCreate, denormalize, normalize, normalizeSet } from '../normalize';
 
 const apiURL = 'https://jsonplaceholder.typicode.com/todos';
