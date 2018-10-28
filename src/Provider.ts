@@ -48,6 +48,21 @@ export class Provider extends Component<IProviderProps, ContextValue> {
     updateService: (service, prevState, changes, callback) => {
       this.setState(state => ({ changes: (state.changes || []).concat(service) }), callback);
       if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
+    },
+    getInstances: serviceTypes => {
+      return serviceTypes.map(serviceType => {
+        let instance =
+          (this.state.injectedServices && this.state.injectedServices.get(serviceType)) ||
+          this.state.services.get(serviceType);
+        if (!instance) {
+          instance = Service.create(serviceType);
+          this.state.initService(instance);
+          this.state.services.set(serviceType, instance);
+        }
+        // @ts-ignore
+        instance.onServiceUpdate = this.state.updateService;
+        return instance;
+      });
     }
   };
 

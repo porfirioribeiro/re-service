@@ -26,41 +26,25 @@ export class Subscribe extends Component<SubscribeProps, SubscribeState> {
   static defaultProps = { pure: true };
   instances: Service<any>[] = [];
   needsUpdate = true;
-  lastNode: ReactNode = null;
   state: SubscribeState = {};
   observedBits?: number;
   /**
    * React 16.3 context has children as a function
    * This function is called with the current
    */
-  renderChild = ({ services, injectedServices, initService, updateService }: ContextValue): ReactNode => {
+  renderChild = (ctx: ContextValue): ReactNode => {
     //check if `to` changed and create instances if needed
     if (this.needsUpdate) {
-      this.instances = this.props.to.map(serviceType => {
-        let instance = (injectedServices && injectedServices.get(serviceType)) || services.get(serviceType);
-        if (!instance) {
-          instance = Service.create(serviceType);
-          initService(instance);
-          services.set(serviceType, instance);
-        }
-        instance.onServiceUpdate = updateService;
-        return instance;
-      });
+      this.instances = ctx.getInstances(this.props.to);
       // Calculate the bits we want to observe so this component will only be updated when the subscribed services update
-      this.observedBits = getBitMaskForServices(this.instances);
-      /**
-       * We cache last rendered node, at the first render this will be null
-       * We only want to actually render the children after we assign observedBits to the Consumer
-       * Also we only do it if not running in SSR
-       */
-      if ((global as any).window) return this.lastNode;
+      this.observedBits = getBitMaskForServices(this.props.to);
     }
 
-    return (this.lastNode = this.props.render
+    return this.props.render
       ? this.props.render(...this.instances)
       : typeof this.props.children === 'function'
         ? this.props.children(...this.instances)
-        : this.props.children);
+        : this.props.children;
   };
 
   /**

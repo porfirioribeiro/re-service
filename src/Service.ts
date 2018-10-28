@@ -11,7 +11,7 @@ export class Service<State = {}> {
   readonly serviceName!: string;
   readonly serviceType!: ServiceType<State>;
   /** @internal */
-  onServiceUpdate?: UpdateServiceFunction;
+  private onServiceUpdate?: UpdateServiceFunction;
   constructor() {}
 
   /**

@@ -1,7 +1,6 @@
 import { createContext } from 'react';
-// @ts-ignore  - Typings
-import { Context } from 'react';
-import { ServiceMap, Service } from './Service';
+
+import { ServiceMap, Service, ServiceType } from './Service';
 
 const calculateChangedBits = (_prev: ContextValue, next: ContextValue) =>
   next.changes ? getBitMaskForServices(next.changes) : 0;
@@ -21,16 +20,18 @@ export interface ContextValue {
   changes: Service[] | null;
   initService: <State = {}>(service: Service<State>) => void;
   updateService: UpdateServiceFunction;
+  getInstances: (serviceTypes: ServiceType[]) => Service[];
 }
 
 export const emptyContext = {} as ContextValue;
 export const RServiceContext = createContext<ContextValue>(emptyContext, calculateChangedBits);
 
-const serviceBitMaskMap = new Map<Service, number>();
+const serviceBitMaskMap = new Map<ServiceType, number>();
 
-export const getBitMaskForServices = (services: Service[]): number =>
+export const getBitMaskForServices = (services: (ServiceType | Service)[]): number =>
   services.reduce((mask, service) => {
-    let m = serviceBitMaskMap.get(service);
-    if (!m) serviceBitMaskMap.set(service, (m = 1 << serviceBitMaskMap.size));
+    const serviceType = service instanceof Service ? service.serviceType : service;
+    let m = serviceBitMaskMap.get(serviceType);
+    if (!m) serviceBitMaskMap.set(serviceType, (m = 1 << serviceBitMaskMap.size));
     return (mask |= m);
   }, 0);
