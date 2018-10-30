@@ -1,9 +1,8 @@
 import { Component, createElement, ReactNode } from 'react';
-// @ts-ignore  - Typings
-import { ConsumerProps, ReactElement } from 'react';
 
 import { Service, ServiceType } from './Service';
 import { RServiceContext, ContextValue, getBitMaskForServices } from './utils';
+import { shallowEqual } from './shallowEqual';
 
 export interface SubscribeProps {
   to: ServiceType[];
@@ -71,7 +70,14 @@ export class Subscribe extends Component<SubscribeProps, SubscribeState> {
       !this.props.to ||
       this.props.to.length !== nextProps.to.length ||
       nextProps.to.some((s, i) => s !== this.props.to[i]);
-    return nextProps.pure && this.props.pureProp === nextProps.pureProp
+    console.log(
+      'scu',
+      nextProps.pure && shallowEqual(this.props.pureProp, nextProps.pureProp)
+        ? this.needsUpdate || nextState !== this.state
+        : true
+    );
+
+    return nextProps.pure && shallowEqual(this.props.pureProp, nextProps.pureProp)
       ? this.needsUpdate || nextState !== this.state
       : true;
   }
