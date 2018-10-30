@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Router, Link } from '@reach/router';
 import TodoList from './todos/TodoList';
 import Todo from './todos/Todo';
@@ -13,11 +13,13 @@ export default class App extends React.Component {
           <Link to="/">Home</Link>
           <Link to="/tests">Tests</Link>
         </nav>
-        <Router>
-          <ServiceTester path="/tests" />
-          <TodoList path="/" />
-          <Todo path="/:id" />
-        </Router>
+        <React.Suspense fallback={<div>Loading........</div>}>
+          <Router>
+            <ServiceTester path="/tests" />
+            <TodoList path="/" />
+            <Todo path="/:id" />
+          </Router>
+        </React.Suspense>
       </React.Fragment>
     );
   }

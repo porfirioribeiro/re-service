@@ -4134,10 +4134,10 @@ range-parser@~1.2.0:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
   integrity sha1-9JvmtIeJTdxA3MlKMi9hEJLgDV4=
 
-rc-service@^0.1.0-alpha.0:
-  version "0.1.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/rc-service/-/rc-service-0.1.0-alpha.0.tgz#af8bd185bae3a7c52e27c2864641aa6a30dfc920"
-  integrity sha512-5KpVhk1ozuQHIsy5weT5RlC5QvaRueOvQ1n2rPjGkvqiYJbvovpDtlUNRfNT24aX4LR6VgJQqhuJ4e8WAhbAlg==
+rc-service@^0.1.0-alpha.1:
+  version "0.1.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/rc-service/-/rc-service-0.1.0-alpha.1.tgz#e04600b47d22061f366841c9e1b7b9ecc6c02895"
+  integrity sha512-cgSYeDNXJe6eN9V+Hd8V4NIwNLNrA4D13/dt2IRYK4Il2B7knMsisuuhDzXR7kNF2Jm9E5+2lwp6PwggJQwiYg==
 
 rc@^1.2.7:
   version "1.2.8"

@@ -23,7 +23,7 @@ const ServiceTester: React.SFC<RouteComponentProps> = () => (
   <div style={{ display: 'flex' }}>
     <Subscribe
       to={[MyService]}
-      render={(myService: MyService) => (
+      render={(myService) => (
         <Tester>
           <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
         </Tester>
@@ -31,7 +31,7 @@ const ServiceTester: React.SFC<RouteComponentProps> = () => (
     />
     <Subscribe
       to={[OtherService]}
-      render={(other: OtherService) => (
+      render={(other) => (
         <Tester>
           <button onClick={other.increment}>{'other ' + other.state.other}</button>
         </Tester>

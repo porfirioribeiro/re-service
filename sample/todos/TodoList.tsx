@@ -10,13 +10,11 @@ const TodoList: React.SFC<RouteComponentProps> = () => {
     <div>
       <button onClick={todoService.todoList.invalidate}>Invalidate</button>
       <ul>
-        {todoList.value
-          ? todoList.value.map(todo => (
-              <li key={todo.id}>
-                <Link to={`${todo.id}`}>{todo.title}</Link>
-              </li>
-            ))
-          : 'Loading'}
+        {todoList.map(todo => (
+          <li key={todo.id}>
+            <Link to={`${todo.id}`}>{todo.title}</Link>
+          </li>
+        ))}
       </ul>
     </div>
   );

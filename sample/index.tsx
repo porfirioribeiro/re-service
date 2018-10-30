@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { render } from 'react-dom';
 
 import { Provider } from 'rc-service';
@@ -7,7 +7,9 @@ import App from './App';
 
 render(
   <Provider plugins={[LogServicePlugin]}>
-    <App />
+    <React.Suspense fallback={<div>Loading</div>} maxDuration={500}>
+      <App />
+    </React.Suspense>
   </Provider>,
   document.getElementById('root')
 );
