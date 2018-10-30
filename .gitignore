@@ -2,6 +2,7 @@ dist
 es6
 .cache
 .rpt2_cache
+.rts2_cache*
 mangle.json
 
 # Logs
