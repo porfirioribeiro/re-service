@@ -1,14 +1,11 @@
 import { Component, createElement, ReactNode } from 'react';
-// @ts-ignore  - Typings
-import { ConsumerProps, ReactElement } from 'react';
-
-import { Service, ServiceType } from './Service';
+import { ServiceTypeArray, ServiceArray } from './Service';
 import { RServiceContext, ContextValue, getBitMaskForServices } from './utils';
 
-export interface SubscribeProps {
-  to: ServiceType[];
-  render?: (...instances: any[]) => ReactNode;
-  children?: (...instances: any[]) => ReactNode;
+export interface SubscribeProps<T extends ServiceTypeArray> {
+  to: T;
+  render?: (...instances: ServiceArray<T>) => ReactNode;
+  children?: (...instances: ServiceArray<T>) => ReactNode;
   pure?: boolean;
   pureProp?: any;
 }
@@ -21,10 +18,10 @@ export interface SubscribeState {
  * Subscribe component acts as a connection to the Provider services
  * It will look for services specified on `to` in the Provider and create them if they don't exist
  */
-export class Subscribe extends Component<SubscribeProps, SubscribeState> {
+export class Subscribe<T extends ServiceTypeArray> extends Component<SubscribeProps<T>, SubscribeState> {
   static displayName = 'RCSubscribe';
   static defaultProps = { pure: true };
-  instances: Service<any>[] = [];
+  instances: ServiceArray<T> = [] as any;
   needsUpdate = true;
   state: SubscribeState = {};
   observedBits?: number;
@@ -41,16 +38,16 @@ export class Subscribe extends Component<SubscribeProps, SubscribeState> {
     }
 
     return this.props.render
-      ? this.props.render(...this.instances)
+      ? this.props.render(...this.instances as any)
       : typeof this.props.children === 'function'
-        ? this.props.children(...this.instances)
+        ? this.props.children(...this.instances as any)
         : this.props.children;
   };
 
   /**
    * Only re-render this component if `to` changed or if we are in setting observedBits phase.
    */
-  shouldComponentUpdate(nextProps: SubscribeProps, nextState: SubscribeState) {
+  shouldComponentUpdate(nextProps: SubscribeProps<T>, nextState: SubscribeState) {
     this.needsUpdate =
       !this.props.to ||
       this.props.to.length !== nextProps.to.length ||

@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { ServiceMap, Service, ServiceType } from './Service';
+import { ServiceMap, Service, ServiceType, ServiceTypeArray, ServiceArray } from './Service';
 
 const calculateChangedBits = (_prev: ContextValue, next: ContextValue) =>
   next.changes ? getBitMaskForServices(next.changes) : 0;
@@ -20,7 +20,7 @@ export interface ContextValue {
   changes: Service[] | null;
   initService: <State = {}>(service: Service<State>) => void;
   updateService: UpdateServiceFunction;
-  getInstances: (serviceTypes: ServiceType[]) => Service[];
+  getInstances: <T extends ServiceTypeArray>(serviceTypes: T) => ServiceArray<T>;
 }
 
 export const emptyContext = {} as ContextValue;

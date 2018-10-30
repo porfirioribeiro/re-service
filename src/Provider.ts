@@ -62,7 +62,7 @@ export class Provider extends Component<IProviderProps, ContextValue> {
         // @ts-ignore
         instance.onServiceUpdate = this.state.updateService;
         return instance;
-      });
+      }) as any;
     }
   };
 

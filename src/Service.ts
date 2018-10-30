@@ -74,3 +74,8 @@ export interface ServiceType<St = {}, Se extends Service<St> = Service<St>> {
 }
 
 export type ServiceMap = Map<ServiceType, Service>;
+
+export type ServiceTypeArray=Array<ServiceType<{}, Service>>
+export type ServiceArray<T extends ServiceTypeArray> = {
+  [P in keyof T]: T[P] extends ServiceType<{}, infer U> ? U : never
+};
