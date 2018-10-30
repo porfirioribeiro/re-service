@@ -70,13 +70,6 @@ export class Subscribe extends Component<SubscribeProps, SubscribeState> {
       !this.props.to ||
       this.props.to.length !== nextProps.to.length ||
       nextProps.to.some((s, i) => s !== this.props.to[i]);
-    console.log(
-      'scu',
-      nextProps.pure && shallowEqual(this.props.pureProp, nextProps.pureProp)
-        ? this.needsUpdate || nextState !== this.state
-        : true
-    );
-
     return nextProps.pure && shallowEqual(this.props.pureProp, nextProps.pureProp)
       ? this.needsUpdate || nextState !== this.state
       : true;
