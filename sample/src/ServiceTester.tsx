@@ -1,21 +1,21 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
-import { Subscribe, Service, Provider } from 'rc-service';
+import { Subscribe, Service, Provider } from 'rc-service/es6';
 import { MyService, OtherService } from './services';
 
-const injectedService = Service.create(MyService);
+const injectedService = Service.create(MyService, 'MyService');
 
 class Tester extends React.PureComponent {
   timeout: any;
-  ref: HTMLDivElement;
+  ref=React.createRef<HTMLDivElement>()
   componentDidUpdate() {
-    this.ref.style.color = 'red';
+    const ref = this.ref.current!.firstElementChild as HTMLDivElement;
+    ref.style.color = 'red';
     clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => (this.ref.style.color = 'inherit'), 500);
+    this.timeout = setTimeout(() => (ref.style.color = 'inherit'), 500);
   }
-  setRef = r => (this.ref = r && r.firstElementChild);
   render() {
-    return <div ref={this.setRef}>{this.props.children}</div>;
+    return <div ref={this.ref}>{this.props.children}</div>;
   }
 }
 
@@ -23,7 +23,7 @@ const ServiceTester: React.SFC<RouteComponentProps> = () => (
   <div style={{ display: 'flex' }}>
     <Subscribe
       to={[MyService]}
-      render={(myService) => (
+      render={myService => (
         <Tester>
           <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
         </Tester>
@@ -31,7 +31,7 @@ const ServiceTester: React.SFC<RouteComponentProps> = () => (
     />
     <Subscribe
       to={[OtherService]}
-      render={(other) => (
+      render={other => (
         <Tester>
           <button onClick={other.increment}>{'other ' + other.state.other}</button>
         </Tester>

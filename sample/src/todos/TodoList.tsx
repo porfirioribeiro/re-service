@@ -1,7 +1,8 @@
 import React from 'react';
 import { RouteComponentProps, Link } from '@reach/router';
-import { useService } from 'rc-service';
+import { useService } from 'rc-service/es6';
 import { TodoService } from './TodoService';
+
 
 const TodoList: React.SFC<RouteComponentProps> = () => {
   const todoService = useService(TodoService);
