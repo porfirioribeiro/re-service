@@ -1,6 +1,7 @@
 import { Component, createElement, ReactNode } from 'react';
 import { ServiceTypeArray, ServiceArray } from './Service';
 import { RServiceContext, ContextValue, getBitMaskForServices } from './utils';
+import { shallowEqual } from './shallowEqual';
 
 export interface SubscribeProps<T extends ServiceTypeArray> {
   to: T;
@@ -52,7 +53,7 @@ export class Subscribe<T extends ServiceTypeArray> extends Component<SubscribePr
       !this.props.to ||
       this.props.to.length !== nextProps.to.length ||
       nextProps.to.some((s, i) => s !== this.props.to[i]);
-    return nextProps.pure && this.props.pureProp === nextProps.pureProp
+    return nextProps.pure && shallowEqual(this.props.pureProp, nextProps.pureProp)
       ? this.needsUpdate || nextState !== this.state
       : true;
   }
