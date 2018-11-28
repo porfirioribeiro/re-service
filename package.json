@@ -36,7 +36,7 @@
   "scripts": {
     "clean": "rimraf dist es6 .rts2_cache* sample/.cache sample/dist",
     "test": "jest",
-    "build:es6": "tsc -p tsconfig.es6.json",
+    "build:es6": "tsc -p tsconfig.es6.json && rm -rf sample/node_modules/rc-service/es6 && cp -ru es6/ sample/node_modules/rc-service",
     "build:mb": "yarn build:mb:main && yarn build:mb:plugins",
     "build:mb:main": "microbundle --target browser",
     "build:mb:plugins": "microbundle -i src/plugins.ts -o dist/plugins.js",
