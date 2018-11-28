@@ -1,6 +1,6 @@
 {
   "name": "rc-service",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "React Context Services",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
