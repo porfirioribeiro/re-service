@@ -1,5 +1,6 @@
 export type HashPrimitive = number | string | null | undefined;
-export type HashFunction = (x: HashPrimitive | HashPrimitive[] | { [key: string]: HashPrimitive }) => HashPrimitive;
+export type HashType = HashPrimitive | HashPrimitive[] | { [key: string]: HashPrimitive }
+export type HashFunction = (x: HashType) => HashPrimitive;
 
 export const hash: HashFunction = x =>
   x === null || x === undefined
