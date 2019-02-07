@@ -2,8 +2,8 @@ import { Component, createElement, ReactNode } from 'react';
 // @ts-ignore  - Typings
 import { ProviderProps, ConsumerProps, ReactElement } from 'react';
 
-import { RServiceContext, ContextValue, emptyContext } from './utils';
-import { Service, ServiceType } from './Service';
+import { RServiceContext, ContextValue, emptyContext, getBitmask } from './utils';
+import { Service } from './Service';
 import { IServicePlugin } from './Plugin';
 
 export interface IProviderProps {
@@ -31,8 +31,8 @@ export interface IProviderProps {
 export class Provider extends Component<IProviderProps, ContextValue> {
   static displayName = 'RCProvider';
   state: ContextValue = {
-    services: new Map(),
-    changes: null,
+    services: {},
+    changes: 0,
     /**
      * Called when a service is initialized and calls all plugins `init` method
      */
@@ -46,23 +46,20 @@ export class Provider extends Component<IProviderProps, ContextValue> {
      * Sets the `servicesToUpdate` state with the changed service and calls `update` on plugins
      */
     updateService: (service, prevState, changes, callback) => {
-      this.setState(state => ({ changes: (state.changes || []).concat(service) }), callback);
+      this.setState(state => ({ changes: state.changes | getBitmask(service.serviceName) }), callback);
       if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
     },
-    getInstances: serviceTypes => {
-      return serviceTypes.map(serviceType => {
-        let instance =
-          (this.state.injectedServices && this.state.injectedServices.get(serviceType)) ||
-          this.state.services.get(serviceType);
-        if (!instance) {
-          instance = Service.create(serviceType);
-          this.state.initService(instance);
-          this.state.services.set(serviceType, instance);
-        }
-        // @ts-ignore
-        instance.onServiceUpdate = this.state.updateService;
-        return instance;
-      }) as any;
+    getInstance: (serviceType, serviceName) => {
+      let instance =
+        (this.state.injectedServices && this.state.injectedServices[serviceName]) || this.state.services[serviceName];
+      if (!instance) {
+        instance = Service.create(serviceType);
+        this.state.initService(instance);
+        this.state.services[serviceName] = instance;
+      }
+      // @ts-ignore
+      instance.onServiceUpdate = this.state.updateService;
+      return instance;
     }
   };
 
@@ -70,8 +67,7 @@ export class Provider extends Component<IProviderProps, ContextValue> {
     return inject !== prevState.prevInject
       ? {
           prevInject: inject,
-          injectedServices:
-            inject && new Map(inject.map(service => [service.serviceType, service]) as [ServiceType, Service][])
+          injectedServices: inject && inject.reduce((acc, service) => ({ ...acc, [service.serviceName]: service }), {})
         }
       : null;
   }
@@ -83,7 +79,7 @@ export class Provider extends Component<IProviderProps, ContextValue> {
 
   componentDidUpdate() {
     // Cleanup `servicesToUpdate`
-    if (this.state.changes) this.setState({ changes: null });
+    if (this.state.changes) this.setState({ changes: 0 });
     //todo Probably i could probably call update on plugins here passing an array with the modified services
   }
 

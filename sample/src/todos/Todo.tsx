@@ -1,4 +1,4 @@
-import React,{useContext} from 'react';
+import React from 'react';
 import { RouteComponentProps } from '@reach/router';
 import { useService } from 'rc-service/es6';
 import { TodoService } from './TodoService';

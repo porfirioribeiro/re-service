@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, fireEvent } from 'react-testing-library';
 // this adds custom jest matchers from jest-dom
-import 'jest-dom/extend-expect'
+import 'jest-dom/extend-expect';
 
 import { Service, Provider, Subscribe } from '../src';
 
@@ -25,8 +25,9 @@ export class MyService extends Service {
 }
 
 const Counter = () => (
-  <Subscribe to={[MyService]}>
-    {counter => (
+  <Subscribe
+    to={[MyService]}
+    render={(counter: MyService) => (
       <div>
         <span data-testid="value">{counter.state.value}</span>
         <button data-testid="decrement" onClick={() => counter.decrement()}>
@@ -37,7 +38,7 @@ const Counter = () => (
         </button>
       </div>
     )}
-  </Subscribe>
+  />
 );
 
 describe('Provider', () => {

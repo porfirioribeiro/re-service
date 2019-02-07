@@ -1,9 +1,8 @@
 import { createContext } from 'react';
 
-import { ServiceMap, Service, ServiceType, ServiceTypeArray, ServiceArray } from './Service';
+import { ServiceMap, Service, ServiceType } from './Service';
 
-const calculateChangedBits = (_prev: ContextValue, next: ContextValue) =>
-  next.changes ? getBitMaskForServices(next.changes) : 0;
+const calculateChangedBits = (_prev: ContextValue, next: ContextValue) => next.changes;
 
 export type UpdateServiceCallback = () => void;
 export type UpdateServiceFunction = <State = {}>(
@@ -13,25 +12,30 @@ export type UpdateServiceFunction = <State = {}>(
   callback?: UpdateServiceCallback
 ) => void;
 
+type GetInstanceFn<St = {}, Se extends Service<St> = Service<St>> = (
+  serviceType: ServiceType<St, Se>,
+  serviceName: string
+) => Se;
+
 export interface ContextValue {
   services: ServiceMap;
   injectedServices?: ServiceMap;
   prevInject?: Service[];
-  changes: Service[] | null;
+  changes: number;
   initService: <State = {}>(service: Service<State>) => void;
   updateService: UpdateServiceFunction;
-  getInstances: <T extends ServiceTypeArray>(serviceTypes: T) => ServiceArray<T>;
+  getInstance: GetInstanceFn;
 }
 
 export const emptyContext = {} as ContextValue;
 export const RServiceContext = createContext<ContextValue>(emptyContext, calculateChangedBits);
 
-const serviceBitMaskMap = new Map<ServiceType, number>();
+/** Creates a map to store services names bitmask used for injection */
+const bitmaskMap: Record<string, number> = {};
 
-export const getBitMaskForServices = (services: (ServiceType | Service)[]): number =>
-  services.reduce((mask, service) => {
-    const serviceType = service instanceof Service ? service.serviceType : service;
-    let m = serviceBitMaskMap.get(serviceType);
-    if (!m) serviceBitMaskMap.set(serviceType, (m = 1 << serviceBitMaskMap.size));
-    return (mask |= m);
-  }, 0);
+/** current bitmask count, this is always increasing to avoid colision */
+let bitmaskCount = 0;
+
+export function getBitmask(serviceName: string): number {
+  return bitmaskMap[serviceName] || (bitmaskMap[serviceName] = 1 << bitmaskCount++);
+}
