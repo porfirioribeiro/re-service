@@ -7,11 +7,11 @@
     "dot-prop-immutable": "^1.5.0",
     "fast-memoize": "^2.5.1",
     "rc-service": "../rc-service-v0.1.0-alpha.2.tgz",
-    "react": "^16.8.0-alpha.1",
-    "react-dom": "^16.8.0-alpha.1"
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -26,12 +26,12 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@types/jest": "23.3.13",
+    "@types/jest": "24.0.0",
     "@types/node": "10.12.21",
     "@types/reach__router": "^1.2.3",
-    "@types/react": "16.8.1",
-    "@types/react-dom": "16.0.11",
+    "@types/react": "16.8.2",
+    "@types/react-dom": "16.8.0",
     "react-scripts": "2.1.3",
-    "typescript": "3.3.1"
+    "typescript": "3.3.3"
   }
 }
