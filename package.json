@@ -15,20 +15,20 @@
     "src"
   ],
   "mangle": {
-    "regex": "^(instances|onServiceUpdate|getBitMaskForServices|serviceBitMaskMap|observedBits|lastNode|initService|updateService|needsUpdate|renderChild|prevInject)$"
+    "regex": "^(instances|onServiceUpdate|initService|updateService|renderChild|prevInject)$"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.13",
-    "@types/react": "^16.8.1",
-    "jest": "^24.0.0",
-    "jest-dom": "^3.0.1",
+    "@types/jest": "^24.0.0",
+    "@types/react": "^16.8.2",
+    "jest": "^24.1.0",
+    "jest-dom": "^3.0.2",
     "microbundle": "^0.9.0",
-    "react": "^16.8.0-alpha.1",
-    "react-dom": "^16.8.0-alpha.1",
-    "react-testing-library": "^5.4.4",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "react-testing-library": "^5.5.3",
     "rimraf": "^2.6.3",
     "ts-jest": "^23.10.5",
-    "typescript": "^3.3.1"
+    "typescript": "^3.3.3"
   },
   "peerDependencies": {
     "react": "16.7.0-alpha.2"
@@ -41,7 +41,7 @@
     "build:mb:main": "microbundle --target browser",
     "build:mb:plugins": "microbundle -i src/plugins.ts -o dist/plugins.js",
     "build": "yarn build:es6 && yarn build:mb",
-    "update": "yarn build:es6 && cp -rfu es6/ sample/node_modules/rc-service",
+    "update": "yarn build:es6 --outDir sample/node_modules/rc-service/es6",
     "dev": "tsc -p tsconfig.es6.json -w",
     "prepublish": "yarn clean && yarn build"
   },
