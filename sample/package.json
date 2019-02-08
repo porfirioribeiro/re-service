@@ -6,7 +6,7 @@
     "@reach/router": "^1.2.1",
     "dot-prop-immutable": "^1.5.0",
     "fast-memoize": "^2.5.1",
-    "rc-service": "../rc-service-v0.1.0-alpha.2.tgz",
+    "rc-service": "^0.1.0-beta.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1"
   },

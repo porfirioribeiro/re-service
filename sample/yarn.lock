@@ -8014,9 +8014,10 @@ raw-body@2.3.3:
     iconv-lite "0.4.23"
     unpipe "1.0.0"
 
-rc-service@../rc-service-v0.1.0-alpha.2.tgz:
-  version "0.1.0-alpha.2"
-  resolved "../rc-service-v0.1.0-alpha.2.tgz#a2c3d57a23982ac1c8356020f0082f02ec654d63"
+rc-service@^0.1.0-beta.1:
+  version "0.1.0-beta.1"
+  resolved "https://registry.yarnpkg.com/rc-service/-/rc-service-0.1.0-beta.1.tgz#99909befd9bec25a41b16c2460bdfa77f6da79a6"
+  integrity sha512-torm3MXg1w8H6/unNzHwqJW1zybVP+6bk2PU1YRUaXMK0TmDEcohVP5ZSdnBnsLxDwK2ZRVEiPl67J2wNv9J8Q==
 
 rc@^1.2.7:
   version "1.2.8"

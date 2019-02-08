@@ -1,13 +1,13 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
-import { Subscribe, Service, Provider } from 'rc-service/es6';
+import { Subscribe, Service, Provider, useService } from 'rc-service/es6';
 import { MyService, OtherService } from './services';
 
 const injectedService = Service.create(MyService, 'MyService');
 
 class Tester extends React.PureComponent {
   timeout: any;
-  ref=React.createRef<HTMLDivElement>()
+  ref = React.createRef<HTMLDivElement>();
   componentDidUpdate() {
     const ref = this.ref.current!.firstElementChild as HTMLDivElement;
     ref.style.color = 'red';
@@ -17,6 +17,17 @@ class Tester extends React.PureComponent {
   render() {
     return <div ref={this.ref}>{this.props.children}</div>;
   }
+}
+
+function HookService({ name }: { name: string }) {
+  console.log('useServices', name);
+  const myService = useService(MyService, name);
+
+  return (
+    <Tester>
+      <button onClick={myService.increment}>{`myService(${name})` + myService.state.value}</button>
+    </Tester>
+  );
 }
 
 const ServiceTester: React.SFC<RouteComponentProps> = () => (
@@ -70,6 +81,12 @@ const ServiceTester: React.SFC<RouteComponentProps> = () => (
         )}
       />
     </Provider>
+
+    <div>
+      <HookService name="serviceone" />
+      <HookService name="MyService" />
+      <HookService name="serviceone" />
+    </div>
     {/* Hello <RServiceContext.Consumer>{x => x.test}</RServiceContext.Consumer>
             <button onClick={_ => this.setState({ test: 'hello' })}>xxx</button> */}
   </div>
