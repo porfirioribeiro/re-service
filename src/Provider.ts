@@ -53,7 +53,7 @@ export class Provider extends Component<IProviderProps, ContextValue> {
       let instance =
         (this.state.injectedServices && this.state.injectedServices[serviceName]) || this.state.services[serviceName];
       if (!instance) {
-        instance = Service.create(serviceType);
+        instance = Service.create(serviceType, serviceName);
         this.state.initService(instance);
         this.state.services[serviceName] = instance;
       }

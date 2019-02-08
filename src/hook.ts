@@ -7,7 +7,7 @@ const dispatcher = (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_F
 export function useService<St, Se extends Service<St>>(
   serviceType: ServiceType<St, Se>,
   serviceName = serviceType.serviceName
-) {
+): Se {
   return dispatcher.current.useContext(RServiceContext, getBitmask(serviceName)).getInstance(serviceType, serviceName);
 }
 

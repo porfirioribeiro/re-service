@@ -31,7 +31,7 @@
     "typescript": "^3.3.3"
   },
   "peerDependencies": {
-    "react": "16.7.0-alpha.2"
+    "react": "^16.8.1"
   },
   "scripts": {
     "clean": "rimraf dist es6 .rts2_cache* sample/.cache sample/dist",
