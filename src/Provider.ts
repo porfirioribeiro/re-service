@@ -60,6 +60,9 @@ export class Provider extends Component<IProviderProps, ContextValue> {
       // @ts-ignore
       instance.onServiceUpdate = this.state.updateService;
       return instance;
+    },
+    disposeService: (serviceName: string) => {
+      delete this.state.services[serviceName];
     }
   };
 
@@ -67,7 +70,8 @@ export class Provider extends Component<IProviderProps, ContextValue> {
     return inject !== prevState.prevInject
       ? {
           prevInject: inject,
-          injectedServices: inject && inject.reduce((acc, service) => ({ ...acc, [service.serviceName]: service }), {})
+          injectedServices:
+            inject && inject.reduce((acc, service) => ({ ...acc, [service.serviceType.serviceName]: service }), {})
         }
       : null;
   }
