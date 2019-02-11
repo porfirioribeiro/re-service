@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps, Link } from '@reach/router';
-import { useService } from 'rc-service/es6';
+import { useService } from '../../src';
 import { TodoService } from './TodoService';
 
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'rc-service/es6';
-import { LogServicePlugin } from 'rc-service/es6/plugins';
+import { Provider } from '../src';
+import { LogServicePlugin } from '../src/plugins';
 
 import './index.css';
 import App from './App';

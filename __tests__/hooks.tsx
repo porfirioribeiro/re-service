@@ -24,10 +24,10 @@ export class MyService extends Service {
   decrement = () => this.setState({ value: this.state.value - 1 });
 }
 
-const Counter = () => {
-  const counter = useService(MyService);
+const Counter = (p: { name?: string }) => {
+  const counter = useService(MyService, p.name);
   return (
-    <div>
+    <div data-testid={p.name || 'test'}>
       <span data-testid="value">{counter.state.value}</span>
       <button data-testid="decrement" onClick={() => counter.decrement()}>
         -
@@ -70,4 +70,37 @@ describe('Provider', () => {
     expect(p.getByTestId('value')).toHaveTextContent('10');
     expect(myService.state.value).toBe(10);
   });
+
+  it('Provider with service name', () => {
+    const p = render(
+      <Provider>
+        <Counter name="c1" />
+        <Counter name="c2" />
+      </Provider>
+    );
+
+    const c1 = getElems(p.getByTestId('c1'));
+    const c2 = getElems(p.getByTestId('c2'));
+
+    expect(c1.value).toHaveTextContent('10');
+    click(c1.increment);
+    expect(c1.value).toHaveTextContent('11');
+    click(c1.decrement);
+    expect(c1.value).toHaveTextContent('10');
+
+    expect(c2.value).toHaveTextContent('10');
+    click(c2.increment);
+    click(c2.increment);
+    expect(c2.value).toHaveTextContent('12');
+    click(c2.decrement);
+    expect(c2.value).toHaveTextContent('11');
+  });
 });
+
+function getElems(c: HTMLElement) {
+  return {
+    value: c.querySelector('[data-testid=value]') as HTMLElement,
+    increment: c.querySelector('[data-testid=increment]') as HTMLElement,
+    decrement: c.querySelector('[data-testid=decrement]') as HTMLElement
+  };
+}

@@ -1,5 +1,5 @@
-import { Service } from 'rc-service/es6';
-import { createCache } from 'rc-service/es6/serviceCache/suspense';
+import { Service } from '../../src';
+import { createCache } from '../../src/serviceCache/suspense';
 import { Normalized, normalizeCreate, denormalize, normalize, normalizeSet } from '../normalize';
 
 const apiURL = 'https://jsonplaceholder.typicode.com/todos';

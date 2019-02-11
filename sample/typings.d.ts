@@ -4,6 +4,12 @@ declare module '*.json' {
   export default value;
 }
 
+declare module '*.svg' {
+  const value: any;
+  export default value;
+}
+
+
 declare module 'dot-prop-immutable' {
   const imm: {
     get: <T = object, V = any>(object: T, path: string, defaultValue?: V) => V;

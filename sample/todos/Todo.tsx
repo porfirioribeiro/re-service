@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
-import { useService } from 'rc-service/es6';
+import { useService } from '../../src';
 import { TodoService } from './TodoService';
 
 const Todo: React.SFC<RouteComponentProps<{ id: number }>> = ({ id }) => {

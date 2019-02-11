@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
-import { Subscribe, Service, Provider, useService } from 'rc-service/es6';
+import { Subscribe, Service, Provider, useService } from '../src';
 import { MyService, OtherService } from './services';
 
 const injectedService = Service.create(MyService, 'MyService');
@@ -81,7 +81,6 @@ const ServiceTester: React.SFC<RouteComponentProps> = () => (
         )}
       />
     </Provider>
-
     <div>
       <HookService name="serviceone" />
       <HookService name="MyService" />
