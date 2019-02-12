@@ -15,7 +15,7 @@ class CounterService extends Service<{ count: number }> {
 function Counter({ name }: { name?: string }) {
   const counter = useService(CounterService, name);
 
-  console.log(counter.serviceName);
+  console.log('Counter', counter.serviceName);
 
   return <SimpleCounter counter={counter} name={name} />;
 }
@@ -24,7 +24,7 @@ function SimpleCounter({ counter, name }: { counter: CounterService; name?: stri
   return (
     <div>
       <button onClick={counter.increment}>+</button>
-      {name} - {counter.state.count}
+      {name}:{counter.serviceName} - {counter.state.count}
       <button onClick={counter.decrement}>-</button>
     </div>
   );
@@ -33,9 +33,20 @@ function SimpleCounter({ counter, name }: { counter: CounterService; name?: stri
 function DisposableCounter({ id }: { id: number }) {
   const counter = useServiceDisposable(CounterService, `counter_${id}`);
 
-  console.log(counter.serviceName);
+  console.log('DisposableCounter', counter.serviceName);
 
-  return <SimpleCounter counter={counter} name={counter.serviceName} />;
+  return (
+    <>
+      <Provider inject={[counter]}>
+        <div>
+          Counter injected {counter.serviceName} {counter.state.count}
+        </div>
+        <Counter />
+        <Counter />
+      </Provider>
+      <SimpleCounter counter={counter} name={counter.serviceName} />
+    </>
+  );
 }
 
 function Feat() {

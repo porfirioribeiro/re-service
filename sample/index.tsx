@@ -8,7 +8,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <Provider plugins={[LogServicePlugin]}>
+  <Provider root plugins={[LogServicePlugin]}>
     <React.Suspense fallback={<div>Loading</div>}>
       <App />
     </React.Suspense>
