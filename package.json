@@ -15,7 +15,7 @@
     "src"
   ],
   "mangle": {
-    "regex": "^(instances|onServiceUpdate|initService|updateService|renderChild|prevInject)$"
+    "regex": "^(instances|onServiceUpdate|initService|updateService|renderChild|inject)$"
   },
   "devDependencies": {
     "@types/jest": "^24.0.0",

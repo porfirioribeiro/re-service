@@ -1,16 +1,16 @@
 import { Component, createElement, ReactNode } from 'react';
-// @ts-ignore  - Typings
-import { ProviderProps, ConsumerProps, ReactElement } from 'react';
 
 import { RServiceContext, ContextValue, emptyContext, getBitmask } from './utils';
 import { Service } from './Service';
 import { IServicePlugin } from './Plugin';
+import { shallowEqual } from './shallowEqual';
 
 export interface IProviderProps {
   children: ReactNode;
   /**
    * You can pass a array of plugin objects that can be used to do something
    * when the service is created every time it is changed
+   * Only valid on root Provider
    */
   plugins?: IServicePlugin[];
   /**
@@ -30,46 +30,48 @@ export interface IProviderProps {
  */
 export class Provider extends Component<IProviderProps, ContextValue> {
   static displayName = 'RCProvider';
-  state: ContextValue = {
-    services: {},
-    changes: 0,
-    /**
-     * Called when a service is initialized and calls all plugins `init` method
-     */
-    initService: <State = {}>(service: Service<State>) => {
-      (this.props.plugins || []).forEach(p => {
-        p.init(service as any);
-      });
-    },
-    /**
-     * Called when a service is updated
-     * Sets the `servicesToUpdate` state with the changed service and calls `update` on plugins
-     */
-    updateService: (service, prevState, changes, callback) => {
-      this.setState(state => ({ changes: state.changes | getBitmask(service.serviceName) }), callback);
-      if (this.props.plugins) this.props.plugins.forEach(p => p.update(service, prevState, changes));
-    },
-    getInstance: (serviceType, serviceName) => {
-      let instance =
-        (this.state.injectedServices && this.state.injectedServices[serviceName]) || this.state.services[serviceName];
-      if (!instance) {
-        instance = Service.create(serviceType, serviceName);
-        this.state.initService(instance);
-        this.state.services[serviceName] = instance;
+
+  constructor(props: IProviderProps) {
+    super(props);
+    const rootProvider = this;
+    this.state = {
+      services: {},
+      changes: 0,
+      /**
+       * Called when a service is initialized and calls all plugins `init` method
+       */
+      initService<State = {}>(service: Service<State>) {
+        (props.plugins || []).forEach(p => p.init(service as any));
+      },
+      /**
+       * Called when a service is updated
+       * Sets the `servicesToUpdate` state with the changed service and calls `update` on plugins
+       */
+      updateService(service, prevState, changes, callback) {
+        rootProvider.setState(state => ({ changes: state.changes | getBitmask(service.serviceName) }), callback);
+        if (props.plugins) props.plugins.forEach(p => p.update(service, prevState, changes));
+      },
+      getInstance(serviceType, serviceName) {
+        let instance = (this.injectedServices && this.injectedServices[serviceName]) || this.services[serviceName];
+        if (!instance) {
+          instance = Service.create(serviceType, serviceName);
+          this.initService(instance);
+          this.services[serviceName] = instance;
+        }
+        // @ts-ignore
+        instance.onServiceUpdate = this.updateService;
+        return instance;
+      },
+      disposeService(serviceName: string) {
+        delete this.services[serviceName];
       }
-      // @ts-ignore
-      instance.onServiceUpdate = this.state.updateService;
-      return instance;
-    },
-    disposeService: (serviceName: string) => {
-      delete this.state.services[serviceName];
-    }
-  };
+    };
+  }
 
   static getDerivedStateFromProps({ inject }: IProviderProps, prevState: ContextValue): Partial<ContextValue> | null {
-    return inject !== prevState.prevInject
+    return !shallowEqual(inject, prevState.inject)
       ? {
-          prevInject: inject,
+          inject,
           injectedServices:
             inject && inject.reduce((acc, service) => ({ ...acc, [service.serviceType.serviceName]: service }), {})
         }

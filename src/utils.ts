@@ -2,8 +2,6 @@ import { createContext } from 'react';
 
 import { ServiceMap, Service, ServiceType } from './Service';
 
-const calculateChangedBits = (_prev: ContextValue, next: ContextValue) => next.changes;
-
 export type UpdateServiceCallback = () => void;
 export type UpdateServiceFunction = <State = {}>(
   service: Service,
@@ -20,7 +18,7 @@ type GetInstanceFn<St = {}, Se extends Service<St> = Service<St>> = (
 export interface ContextValue {
   services: ServiceMap;
   injectedServices?: ServiceMap;
-  prevInject?: Service[];
+  inject?: Service[];
   changes: number;
   initService: <State = {}>(service: Service<State>) => void;
   updateService: UpdateServiceFunction;
@@ -29,7 +27,7 @@ export interface ContextValue {
 }
 
 export const emptyContext = {} as ContextValue;
-export const RServiceContext = createContext<ContextValue>(emptyContext, calculateChangedBits);
+export const RServiceContext = createContext<ContextValue>(emptyContext, (_prev, next) => next.changes);
 
 /** Creates a map to store services names bitmask used for injection */
 const bitmaskMap: Record<string, number> = {};
