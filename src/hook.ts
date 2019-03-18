@@ -10,6 +10,8 @@ interface UseServiceOptions {
   name?: string;
   /** Subscribe this service. Default is `true`*/
   subscribe?: boolean;
+  /** Dispose the service after unmount. Default is `false` */
+  disposable?: boolean;
 }
 
 /**
@@ -23,6 +25,12 @@ interface UseServiceOptions {
  *
  * Use `{name: 'someService'}` only if you need to use the same service
  * multiple times differently.
+ *
+ * Use `{disposable: true, name: 'someService'}` to make the service disposable.
+ * A disposable service will be destroyed after the component unmount.
+ * May be usefull to inject in a sub Provider
+ * When `disposable: true` be aware that if you don't specify a name you will destroy the default instance of your service.
+ * Make sure that is what you want
  * @param serviceType Service class to use
  * @param options serviceName or options
  */
@@ -33,23 +41,17 @@ export function useService<St, Se extends Service<St>>(
   const opt: UseServiceOptions = typeof options === 'string' ? { name: options } : options || {};
   const serviceName = opt.name || serviceType.serviceName;
 
-  return dispatcher.current
-    .useContext(RServiceContext, opt.subscribe === false ? 0 : getBitmask(serviceName))
-    .getInstance(serviceType, serviceName) as Se;
-}
+  const ctx: ContextValue = dispatcher.current.useContext(
+    RServiceContext,
+    opt.subscribe === false ? 0 : getBitmask(serviceName)
+  );
 
-export function useServiceDisposable<St, Se extends Service<St>>(
-  serviceType: ServiceType<St, Se>,
-  serviceName?: string
-): Se {
-  const u = React.useRef(Math.random() * 1e10);
+  React.useEffect(() => (opt.disposable ? () => ctx.disposeService(serviceName) : void 0), [
+    serviceName,
+    opt.disposable
+  ]);
 
-  const sname = serviceName || `tmp${u.current}_${serviceType.serviceName}`;
-
-  const ctx: ContextValue = dispatcher.current.useContext(RServiceContext, getBitmask(sname));
-
-  React.useEffect(() => () => ctx.disposeService(sname), [sname]);
-  return ctx.getInstance(serviceType, sname) as Se;
+  return ctx.getInstance(serviceType, serviceName) as Se;
 }
 
 export function useServices<T extends ServiceTypeArray>(serviceTypes: T) {

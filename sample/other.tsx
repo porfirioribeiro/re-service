@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Service, Provider, useService, useServiceDisposable } from '../src';
+import { Service, Provider, useService } from '../src';
 import { RouteComponentProps } from '@reach/router';
 
 class CounterService extends Service<{ count: number }> {
@@ -31,7 +31,7 @@ function SimpleCounter({ counter, name }: { counter: CounterService; name?: stri
 }
 
 function DisposableCounter({ id }: { id: number }) {
-  const counter = useServiceDisposable(CounterService, `counter_${id}`);
+  const counter = useService(CounterService, { name: `counter_${id}`, disposable: true });
 
   console.log('DisposableCounter', counter.serviceName);
 
