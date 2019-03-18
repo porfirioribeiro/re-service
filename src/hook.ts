@@ -54,6 +54,13 @@ export function useService<St, Se extends Service<St>>(
   return ctx.getInstance(serviceType, serviceName) as Se;
 }
 
+/**
+ * use many services.
+ * Used for Subscribe render prop component for legacy
+ * It's prefered to use `useService`
+ * Will be removed soon
+ * @deprecated
+ */
 export function useServices<T extends ServiceTypeArray>(serviceTypes: T) {
   const bitmask = serviceTypes.reduce((bm, st: any) => (bm |= getBitmask(st.serviceName)), 0);
   const ctx = dispatcher.current.useContext(RServiceContext, bitmask);
