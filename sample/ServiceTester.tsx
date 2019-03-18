@@ -30,6 +30,17 @@ function HookService({ name }: { name: string }) {
   );
 }
 
+function Disconnected() {
+  const myService = useService(MyService, { subscribe: false });
+  console.log('Disconnected', myService);
+
+  return (
+    <Tester>
+      <button onClick={myService.increment}>myService(disconnected)</button>
+    </Tester>
+  );
+}
+
 const ServiceTester: React.SFC<RouteComponentProps> = () => (
   <div style={{ display: 'flex' }}>
     <Subscribe
@@ -85,6 +96,7 @@ const ServiceTester: React.SFC<RouteComponentProps> = () => (
       <HookService name="serviceone" />
       <HookService name="MyService" />
       <HookService name="serviceone" />
+      <Disconnected />
     </div>
     {/* Hello <RServiceContext.Consumer>{x => x.test}</RServiceContext.Consumer>
             <button onClick={_ => this.setState({ test: 'hello' })}>xxx</button> */}
