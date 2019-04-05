@@ -20,7 +20,6 @@ export interface ContextValue {
   injectedServices?: ServiceMap;
   inject?: Service[];
   changes: number;
-  initService: <State = {}>(service: Service<State>) => void;
   updateService: UpdateServiceFunction;
   getInstance: GetInstanceFn;
   disposeService(serviceName: string): void;
