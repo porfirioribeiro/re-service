@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Service, Provider, useService } from '../src';
+import { Service, useService } from '../src';
 import { RouteComponentProps } from '@reach/router';
 
 class CounterService extends Service<{ count: number }> {
@@ -31,19 +31,18 @@ function SimpleCounter({ counter, name }: { counter: CounterService; name?: stri
 }
 
 function DisposableCounter({ id }: { id: number }) {
-  const counter = useService(CounterService, { name: `counter_${id}`, disposable: true });
+  const name = `counter_${id}`;
+  const counter = useService(CounterService, { name, disposable: true });
 
   console.log('DisposableCounter', counter.serviceName);
 
   return (
     <>
-      <Provider inject={[counter]}>
-        <div>
-          Counter injected {counter.serviceName} {counter.state.count}
-        </div>
-        <Counter />
-        <Counter />
-      </Provider>
+      <div>
+        Counter injected {counter.serviceName} {counter.state.count}
+      </div>
+      <Counter name={name} />
+      <Counter name={name} />
       <SimpleCounter counter={counter} name={counter.serviceName} />
     </>
   );

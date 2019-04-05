@@ -3,7 +3,7 @@ import { render, fireEvent } from 'react-testing-library';
 // this adds custom jest matchers from jest-dom
 import 'jest-dom/extend-expect';
 
-import { Service, Provider, useService } from '../src';
+import { Service, useService } from '../src';
 
 function click(el: HTMLElement) {
   fireEvent(
@@ -15,7 +15,7 @@ function click(el: HTMLElement) {
   );
 }
 
-export class MyService extends Service {
+export class MyService extends Service<{ value: number }> {
   static serviceName = 'MyService';
   state = {
     value: 10
@@ -42,9 +42,9 @@ const Counter = (p: { name?: string }) => {
 describe('Provider', () => {
   it('does something', () => {
     const p = render(
-      <Provider>
+      <>
         <Counter />
-      </Provider>
+      </>
     );
     expect(p.getByTestId('value')).toHaveTextContent('10');
     click(p.getByTestId('increment'));
@@ -52,31 +52,12 @@ describe('Provider', () => {
     click(p.getByTestId('decrement'));
     expect(p.getByTestId('value')).toHaveTextContent('10');
   });
-
-  it('Provider with inject', () => {
-    const myService = Service.create(MyService);
-
-    const p = render(
-      <Provider inject={[myService]}>
-        <Counter />
-      </Provider>
-    );
-    expect(p.getByTestId('value')).toHaveTextContent('10');
-    expect(myService.state.value).toBe(10);
-    click(p.getByTestId('increment'));
-    expect(p.getByTestId('value')).toHaveTextContent('11');
-    expect(myService.state.value).toBe(11);
-    click(p.getByTestId('decrement'));
-    expect(p.getByTestId('value')).toHaveTextContent('10');
-    expect(myService.state.value).toBe(10);
-  });
-
   it('Provider with service name', () => {
     const p = render(
-      <Provider>
+      <>
         <Counter name="c1" />
         <Counter name="c2" />
-      </Provider>
+      </>
     );
 
     const c1 = getElems(p.getByTestId('c1'));

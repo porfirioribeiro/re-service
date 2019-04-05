@@ -1,4 +1,2 @@
-export { Provider } from './Provider';
-export { Service } from './Service';
-export { createCache, CacheType } from './serviceCache/index';
-export { useService } from './hook';
+export { createServiceContext, defaultServiceContext, useService, useServiceInstance } from './context';
+export { Service } from './service';

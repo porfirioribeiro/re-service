@@ -1,18 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from '../src';
-import { LogServicePlugin } from '../src/plugins';
 
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <Provider root plugins={[LogServicePlugin]}>
-    <React.Suspense fallback={<div>Loading</div>}>
-      <App />
-    </React.Suspense>
-  </Provider>,
+  <React.Suspense fallback={<div>Loading</div>}>
+    <App />
+  </React.Suspense>,
   document.getElementById('root')
 );
 
