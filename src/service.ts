@@ -1,11 +1,12 @@
-import { ServiceListener, Mutable, ServiceCtx } from "./types";
+import { ServiceListener, Mutable, ServiceCtx } from './types';
+import { batch } from './batch';
 
 export abstract class Service<State, InitOptions = {}> {
   state: State; // prettier-ignore
   readonly serviceName: string;
   readonly serviceContext: ServiceCtx;
 
-  private listeners: ServiceListener<any>[] = [];
+  private _listeners: ServiceListener<any>[] = [];
 
   protected initState?(initOptions: InitOptions): State;
   protected disposeService?(): void;
@@ -14,27 +15,27 @@ export abstract class Service<State, InitOptions = {}> {
     if (service.disposeService) service.disposeService();
   }
 
-  constructor(
-    serviceContext: ServiceCtx,
-    serviceName: string,
-    initOptions: InitOptions
-  ) {
+  constructor(serviceContext: ServiceCtx, serviceName: string, initOptions: InitOptions) {
     this.serviceContext = serviceContext;
     this.serviceName = serviceName;
 
     this.state = this.initState ? this.initState(initOptions) : ({} as State);
   }
 
-  protected setState(newState: Partial<State>) {
-    const state = Object.assign({}, this.state, newState);
+  protected setState(newState: Partial<State>): void;
+  protected setState(newState: State, full: true): void;
+  protected setState(newState: State, full?: boolean) {
+    const state = full ? newState : Object.assign({}, this.state, newState);
     (this as Mutable<Service<State>>).state = state;
-    this.listeners.forEach(l => l(state));
+    batch(listeners => {
+      for (let i = 0; i < listeners.length; i++) {
+        listeners[i](state);
+      }
+    }, this._listeners);
   }
 
   subscribe(listener: ServiceListener<State>) {
-    this.listeners.push(listener);
-    return () => (
-      (this.listeners = this.listeners.filter(l => l != listener)), void 0
-    );
+    this._listeners.push(listener);
+    return () => ((this._listeners = this._listeners.filter(l => l != listener)), void 0);
   }
 }

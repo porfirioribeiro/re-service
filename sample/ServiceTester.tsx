@@ -21,7 +21,14 @@ function HookService({ name }: { name: string }) {
   const myService = useService(MyService, name);
   return (
     <Tester>
-      <button onClick={myService.increment}>{`myService(${name})` + myService.state.value}</button>
+      <button
+        onClick={() => {
+          myService.increment();
+          myService.increment();
+        }}
+      >
+        {`myService(${name})` + myService.state.value}
+      </button>
     </Tester>
   );
 }
