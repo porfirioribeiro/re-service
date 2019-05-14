@@ -2,13 +2,15 @@ import { ServiceListener, Mutable, ServiceCtx } from './types';
 import { batch } from './batch';
 
 export abstract class Service<State, InitOptions = {}> {
-  state: State; // prettier-ignore
+  state: State;
+  initOptions: InitOptions;
   readonly serviceName: string;
   readonly serviceContext: ServiceCtx;
 
   private _listeners: ServiceListener<any>[] = [];
 
   protected initState?(initOptions: InitOptions): State;
+  protected postInit?(): void;
   protected disposeService?(): void;
 
   static dispose<State>(service: Service<State>) {
@@ -18,8 +20,10 @@ export abstract class Service<State, InitOptions = {}> {
   constructor(serviceContext: ServiceCtx, serviceName: string, initOptions: InitOptions) {
     this.serviceContext = serviceContext;
     this.serviceName = serviceName;
+    this.initOptions = initOptions;
 
     this.state = this.initState ? this.initState(initOptions) : ({} as State);
+    if (this.postInit) this.postInit();
   }
 
   protected setState(newState: Partial<State>): void;
