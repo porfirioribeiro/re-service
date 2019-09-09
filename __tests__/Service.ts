@@ -1,6 +1,6 @@
 import { Service, defaultServiceContext } from '../src';
 
-class Toggler extends Service<{ on: boolean }, { on?: boolean }> {
+class Toggler extends Service<{ on: boolean }, { on: boolean }> {
   static serviceName = 'TogglerService';
   initState({ on = false } = {}) {
     return {
