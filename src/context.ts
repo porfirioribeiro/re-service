@@ -1,11 +1,16 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect, useLayoutEffect } from 'react';
 
 import { Service } from './service';
 import { ServiceCtx, ServiceType, UseServiceOptions } from './types';
 
+const useFineEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 export function createServiceContext(): ServiceCtx {
   const services: Record<string, Service<any> | undefined> = {};
   return {
+    get services() {
+      return services;
+    },
     get(serviceType, serviceName = serviceType.serviceName, initOptions) {
       return (services[serviceName] ||
         (services[serviceName] = new serviceType(this, serviceName, initOptions))) as any;
@@ -14,7 +19,7 @@ export function createServiceContext(): ServiceCtx {
       const service = services[serviceName];
       if (service) Service.dispose(service);
       delete services[serviceName];
-    }
+    },
   };
 }
 
@@ -26,6 +31,8 @@ const ServiceContext = createContext<ServiceCtx>(defaultServiceContext);
  * Wrap your components with this Provider to use a diferent ServiceCtx
  */
 export const Provider = ServiceContext.Provider;
+
+const reducer = (_: any, action: any) => action;
 
 /**
  * Use the specified Service on your component
@@ -49,23 +56,27 @@ export const Provider = ServiceContext.Provider;
  */
 export function useService<State, InitOptions, Svc extends Service<State, InitOptions>>(
   serviceType: ServiceType<State, Svc>,
-  options?: string | UseServiceOptions<InitOptions>
+  options?: string | UseServiceOptions<InitOptions>,
 ): Svc {
   const opt: UseServiceOptions<InitOptions> = typeof options === 'string' ? { name: options } : options || {};
   const serviceName = opt.name || serviceType.serviceName;
 
   const ctx = useContext(ServiceContext);
   const service = ctx.get(serviceType, serviceName, opt.options);
-  const s = useState(service.state);
+  const s = useReducer(reducer, service.state);
 
-  useEffect(() => (opt.subscribe !== false ? service.subscribe(s[1]) : void 0), [service, opt.subscribe]);
-
-  useEffect(() => (opt.disposable ? () => ctx.disposeService(serviceName) : void 0), [service, opt.disposable]);
+  useFineEffect(() => {
+    const unsubscribe = opt.subscribe !== false && service.subscribe(s[1]);
+    return () => {
+      if (unsubscribe) unsubscribe();
+      if (opt.disposable) ctx.disposeService(serviceName);
+    };
+  }, [service, opt.subscribe, opt.disposable]);
 
   return service as Svc;
 }
 
 export function useServiceInstance<State>(service: Service<State>) {
-  const s = useState(service.state);
-  useEffect(() => service.subscribe(s[1]), [service]);
+  const s = useReducer(reducer, service.state);
+  useFineEffect(() => service.subscribe(s[1]), [service]);
 }

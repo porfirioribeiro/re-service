@@ -10,6 +10,7 @@ export interface ServiceType<State extends {}, Se extends Service<State> = Servi
 }
 
 export interface ServiceCtx {
+  readonly services: Record<string, Service<any> | undefined>;
   /**
    * Get or create and inject a Service in this context
    * @param serviceType Service class to inject
@@ -19,7 +20,7 @@ export interface ServiceCtx {
   get<State = {}, InitOptions = {}, Svc extends Service<State, InitOptions> = Service<State, InitOptions>>(
     serviceType: ServiceType<State, Svc>,
     serviceName?: string,
-    initOptions?: InitOptions
+    initOptions?: InitOptions,
   ): Svc;
   disposeService(serviceName: string): void;
 }
@@ -27,7 +28,7 @@ export interface ServiceCtx {
 export interface UseServiceOptions<InitOptions> {
   /** Service name to connect to, default is `Service#serviceName` */
   name?: string;
-  /** Subscribe this service. Default is `true`*/
+  /** Subscribe this service. Default is `true` */
   subscribe?: boolean;
   /** Dispose the service after unmount. Default is `false` */
   disposable?: boolean;
