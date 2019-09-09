@@ -54,4 +54,34 @@ describe('serviceCache', () => {
     expect(readFn).toBeCalledWith(id);
     expect(storeFn).toBeCalledWith(defaultValue, id);
   });
+
+  it('Width object key', async () => {
+    type Key = { aId: number; bId: number };
+    const value: Record<string, string> = {};
+    const defaultValue = 'Hey';
+    const readFn = jest.fn((key: Key) => value[`${key.aId}_${key.bId}`]);
+    const fetchFn = jest.fn(() => Promise.resolve(defaultValue));
+    const storeFn = jest.fn((v, key: Key) => (value[`${key.aId}_${key.bId}`] = v));
+
+    const cache = createCache<Key, any>(readFn, fetchFn, storeFn);
+
+    const key = { aId: 5, bId: 5 };
+    let result = cache.read(key);
+    expect(result.loading).toBe(true);
+    expect(result.value).toBeUndefined();
+    expect(result.promise).toBeInstanceOf(Promise);
+
+    expect(fetchFn).toBeCalledWith(key);
+
+    await result.promise;
+
+    result = cache.read(key);
+
+    expect(result.loading).toBe(false);
+    expect(result.value).toBe(defaultValue);
+    expect(result.promise).toBeUndefined();
+
+    expect(readFn).toBeCalledWith(key);
+    expect(storeFn).toBeCalledWith(defaultValue, key);
+  });
 });

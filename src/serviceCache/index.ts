@@ -1,4 +1,4 @@
-import { HashFunction, HashPrimitive, hash as defaultHash } from './hash';
+import { HashFunction, HashPrimitive, HashType, hash as defaultHash } from './hash';
 export { hash } from './hash';
 
 type ReadFN<K, V> = (key: K) => V;
@@ -36,7 +36,7 @@ export type CacheType<K, V> = K extends null | undefined
       invalidate(): void;
     };
 
-export const createCache = <K extends HashPrimitive, V>(
+export const createCache = <K extends HashType, V>(
   read: ReadFN<K, V>,
   fetch: FetchFn<K, V>,
   store: StoreFn<K, V>,
