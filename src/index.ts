@@ -1,5 +1,3 @@
-export { Provider } from './Provider';
-export { Service } from './Service';
-export { Subscribe } from './Subscribe';
-export { shallowEqual } from './shallowEqual';
+export { createServiceContext, defaultServiceContext, useService, useServiceInstance } from './context';
+export { Service } from './service';
 export { createCache, CacheType } from './serviceCache/index';

@@ -1,10 +1,9 @@
-import { Service } from '../src';
+import { Service, defaultServiceContext } from '../src';
 
-class Toggler extends Service<{ on: boolean }> {
+class Toggler extends Service<{ on: boolean }, { on: boolean }> {
   static serviceName = 'TogglerService';
-  constructor(on = false) {
-    super();
-    this.state = {
+  initState({ on = false } = {}) {
+    return {
       on
     };
   }
@@ -12,17 +11,16 @@ class Toggler extends Service<{ on: boolean }> {
 }
 
 describe('Service', () => {
-  it('serviceName and serviceType matches on Service.create', () => {
-    const toggler = Service.create(Toggler);
+  it('serviceName and serviceType matches on defaultServiceContext.get', () => {
+    const toggler = defaultServiceContext.get(Toggler);
 
     expect(toggler.serviceName).toBe(Toggler.serviceName);
     expect(toggler.serviceName).toBe('TogglerService');
-    expect(toggler.serviceType).toBe(Toggler);
     expect(toggler).toBeInstanceOf(Toggler);
   });
 
   it('changes the state when setState is called', () => {
-    const toggler = Service.create(Toggler);
+    const toggler = defaultServiceContext.get(Toggler);
 
     expect(toggler.state.on).toBe(false);
     toggler.toggle();
@@ -30,14 +28,14 @@ describe('Service', () => {
   });
 
   it('creates a Service with a different name', () => {
-    const toggler = Service.create(Toggler, 'FooToggler');
+    const toggler = defaultServiceContext.get(Toggler, 'FooToggler');
 
     expect(toggler.serviceName).not.toBe(Toggler.serviceName);
     expect(toggler.serviceName).toBe('FooToggler');
   });
 
   it('creates a Service with parameters', () => {
-    const toggler = Service.create(Toggler, 'Toggler', true);
+    const toggler = defaultServiceContext.get(Toggler, 'Toggler', { on: true });
 
     expect(toggler.state.on).toBe(true);
   });

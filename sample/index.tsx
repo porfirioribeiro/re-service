@@ -1,13 +1,18 @@
-import * as React from 'react';
-import { render } from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import { Provider } from '../es6';
-import { LogServicePlugin, PersistServicePlugin } from '../es6/plugins';
+import './index.css';
 import App from './App';
+import * as serviceWorker from './serviceWorker';
 
-render(
-  <Provider plugins={[LogServicePlugin]}>
+ReactDOM.render(
+  <React.Suspense fallback={<div>Loading</div>}>
     <App />
-  </Provider>,
+  </React.Suspense>,
   document.getElementById('root')
 );
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: http://bit.ly/CRA-PWA
+serviceWorker.unregister();

@@ -1,24 +1,43 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import { Router, Link } from '@reach/router';
 import TodoList from './todos/TodoList';
 import Todo from './todos/Todo';
 import ServiceTester from './ServiceTester';
-import './app.css';
+import Other from './other';
+import logo from './logo.svg';
+import './App.css';
 
-export default class App extends React.Component {
+class App extends Component {
   render() {
     return (
-      <React.Fragment>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/tests">Tests</Link>
-        </nav>
-        <Router>
-          <ServiceTester path="/tests" />
-          <TodoList path="/" />
-          <Todo path="/:id" />
-        </Router>
-      </React.Fragment>
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>
+            Edit <code>src/App.tsx</code> and save to reload.
+          </p>
+          <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
+            Learn React
+          </a>
+        </header>
+        <React.Fragment>
+          <nav>
+            <Link to="/">Home</Link>
+            <Link to="/tests">Tests</Link>
+            <Link to="/hook">Hook</Link>
+          </nav>
+          <React.Suspense fallback={<div>Loading........</div>}>
+            <Router>
+              <ServiceTester path="/tests" />
+              <TodoList path="/" />
+              <Todo path="/:id" />
+              <Other path="/hook" />
+            </Router>
+          </React.Suspense>
+        </React.Fragment>
+      </div>
     );
   }
 }
+
+export default App;

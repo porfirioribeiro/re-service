@@ -1,4 +1,5 @@
-import { Service, createCache } from '../../es6';
+import { Service } from '../../src';
+import { createCache } from '../../src/serviceCache/suspense';
 import { Normalized, normalizeCreate, denormalize, normalize, normalizeSet } from '../normalize';
 
 const apiURL = 'https://jsonplaceholder.typicode.com/todos';
@@ -12,7 +13,6 @@ interface Todo {
 }
 
 interface TodoState {
-  // todos: Record<number, Todo>;
   todos: Normalized<number, Todo>;
 }
 export class TodoService extends Service<TodoState> {

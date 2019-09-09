@@ -1,77 +1,93 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
-import { Subscribe, Service, Provider } from '../es6';
+import { useService } from '../src';
 import { MyService, OtherService } from './services';
-
-const injectedService = Service.create(MyService);
 
 class Tester extends React.PureComponent {
   timeout: any;
-  ref: HTMLDivElement;
+  ref = React.createRef<HTMLDivElement>();
   componentDidUpdate() {
-    this.ref.style.color = 'red';
+    const ref = this.ref.current!.firstElementChild as HTMLDivElement;
+    ref.style.color = 'red';
     clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => (this.ref.style.color = 'inherit'), 500);
+    this.timeout = setTimeout(() => (ref.style.color = 'inherit'), 500);
   }
-  setRef = r => (this.ref = r && r.firstElementChild);
   render() {
-    return <div ref={this.setRef}>{this.props.children}</div>;
+    return <div ref={this.ref}>{this.props.children}</div>;
   }
+}
+
+function HookService({ name }: { name: string }) {
+  const myService = useService(MyService, name);
+  return (
+    <Tester>
+      <button
+        onClick={() => {
+          myService.increment();
+          myService.increment();
+        }}
+      >
+        {`myService(${name})` + myService.state.value}
+      </button>
+    </Tester>
+  );
+}
+
+function Disconnected() {
+  const myService = useService(MyService, { subscribe: false });
+  return (
+    <Tester>
+      <button onClick={myService.increment}>myService(disconnected)</button>
+    </Tester>
+  );
+}
+
+function S1() {
+  const myService = useService(MyService);
+  return (
+    <Tester>
+      <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
+    </Tester>
+  );
+}
+
+function S2() {
+  const other = useService(OtherService);
+  return (
+    <Tester>
+      <button onClick={other.increment}>{'other ' + other.state.other}</button>
+    </Tester>
+  );
+}
+
+function S3() {
+  const myService = useService(MyService);
+  const other = useService(OtherService);
+  return (
+    <Tester>
+      <button
+        onClick={() => {
+          myService.increment();
+          other.increment();
+        }}
+      >
+        {'myService ' + myService.state.value + ' other ' + other.state.other}
+      </button>
+    </Tester>
+  );
 }
 
 const ServiceTester: React.SFC<RouteComponentProps> = () => (
   <div style={{ display: 'flex' }}>
-    <Subscribe
-      to={[MyService]}
-      render={(myService: MyService) => (
-        <Tester>
-          <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
-        </Tester>
-      )}
-    />
-    <Subscribe
-      to={[OtherService]}
-      render={(other: OtherService) => (
-        <Tester>
-          <button onClick={other.increment}>{'other ' + other.state.other}</button>
-        </Tester>
-      )}
-    />
-    <Subscribe
-      to={[MyService, OtherService]}
-      render={(myService: MyService, other: OtherService) => (
-        <Tester>
-          <button
-            onClick={() => {
-              myService.increment();
-              other.increment();
-            }}
-          >
-            {'myService ' + myService.state.value + ' other ' + other.state.other}
-          </button>
-        </Tester>
-      )}
-    />
-    <Provider inject={[injectedService]}>
-      <Subscribe
-        to={[MyService]}
-        render={(myService: MyService) => (
-          <Tester>
-            <button onClick={myService.increment}>{'myService ' + myService.state.value}</button>
-          </Tester>
-        )}
-      />
-      <Subscribe
-        to={[OtherService]}
-        render={(other: OtherService) => (
-          <Tester>
-            <button onClick={other.increment}>{'other ' + other.state.other}</button>
-          </Tester>
-        )}
-      />
-    </Provider>
-    {/* Hello <RServiceContext.Consumer>{x => x.test}</RServiceContext.Consumer>
-            <button onClick={_ => this.setState({ test: 'hello' })}>xxx</button> */}
+    <S1 />
+    <S2 />
+    <S3 />
+    <div>
+      <HookService name="serviceone" />
+      <HookService name="MyService" />
+      <HookService name="serviceone" />
+      <Disconnected />
+    </div>
   </div>
 );
 
