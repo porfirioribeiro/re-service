@@ -32,7 +32,7 @@ export abstract class Service<State, InitOptions = {}> {
     const state = full ? newState : Object.assign({}, this.state, newState);
     (this as Mutable<Service<State>>).state = state;
     batch(listeners => {
-      for (let i = 0; i < listeners.length; i++) {
+      for (let i = 0; i < listeners.length; i += 1) {
         listeners[i](state);
       }
     }, this._listeners);
@@ -40,6 +40,8 @@ export abstract class Service<State, InitOptions = {}> {
 
   subscribe(listener: ServiceListener<State>) {
     this._listeners.push(listener);
-    return () => ((this._listeners = this._listeners.filter(l => l != listener)), void 0);
+    return () => {
+      this._listeners = this._listeners.filter(l => l !== listener);
+    };
   }
 }
