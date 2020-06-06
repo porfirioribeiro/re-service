@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Router, Link } from '@reach/router';
-import TodoList from './todos/TodoList';
-import Todo from './todos/Todo';
 import ServiceTester from './ServiceTester';
 import Other from './other';
 import logo from './logo.svg';
@@ -23,14 +21,11 @@ class App extends Component {
         <React.Fragment>
           <nav>
             <Link to="/">Home</Link>
-            <Link to="/tests">Tests</Link>
             <Link to="/hook">Hook</Link>
           </nav>
           <React.Suspense fallback={<div>Loading........</div>}>
             <Router>
-              <ServiceTester path="/tests" />
-              <TodoList path="/" />
-              <Todo path="/:id" />
+              <ServiceTester path="/" />
               <Other path="/hook" />
             </Router>
           </React.Suspense>
