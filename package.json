@@ -4,6 +4,7 @@
   "description": "React Context Services",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
+  "esmodule": "dist/index.modern.js",
   "umd:main": "dist/index.umd.js",
   "types": "dist/index.d.ts",
   "author": "Porfirio Ribeiro<porfirioribeiro@gmail.com>",
