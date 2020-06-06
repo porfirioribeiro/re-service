@@ -12,8 +12,7 @@ export function createServiceContext(): ServiceCtx {
       return services;
     },
     get(serviceType, serviceName = serviceType.serviceName, initOptions) {
-      return (services[serviceName] ||
-        (services[serviceName] = new serviceType(this, serviceName, initOptions))) as any;
+      return (services[serviceName] || (services[serviceName] = new serviceType(this, serviceName, initOptions))) as any;
     },
     disposeService(serviceName: string) {
       const service = services[serviceName];

@@ -10,15 +10,15 @@ function click(el: HTMLElement) {
     el,
     new MouseEvent('click', {
       bubbles: true, // click events must bubble for React to see it
-      cancelable: true
-    })
+      cancelable: true,
+    }),
   );
 }
 
 export class MyService extends Service<{ value: number }> {
   static serviceName = 'MyService';
   state = {
-    value: 10
+    value: 10,
   };
   increment = () => this.setState({ value: this.state.value + 1 });
   decrement = () => this.setState({ value: this.state.value - 1 });
@@ -44,7 +44,7 @@ describe('Provider', () => {
     const p = render(
       <>
         <Counter />
-      </>
+      </>,
     );
     expect(p.getByTestId('value')).toHaveTextContent('10');
     click(p.getByTestId('increment'));
@@ -57,7 +57,7 @@ describe('Provider', () => {
       <>
         <Counter name="c1" />
         <Counter name="c2" />
-      </>
+      </>,
     );
 
     const c1 = getElems(p.getByTestId('c1'));
@@ -82,6 +82,6 @@ function getElems(c: HTMLElement) {
   return {
     value: c.querySelector('[data-testid=value]') as HTMLElement,
     increment: c.querySelector('[data-testid=increment]') as HTMLElement,
-    decrement: c.querySelector('[data-testid=decrement]') as HTMLElement
+    decrement: c.querySelector('[data-testid=decrement]') as HTMLElement,
   };
 }

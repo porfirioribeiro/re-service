@@ -4,7 +4,7 @@ class Toggler extends Service<{ on: boolean }, { on: boolean }> {
   static serviceName = 'TogglerService';
   initState({ on = false } = {}) {
     return {
-      on
+      on,
     };
   }
   toggle = () => this.setState({ on: !this.state.on });
