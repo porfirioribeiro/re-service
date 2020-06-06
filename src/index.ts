@@ -1,2 +1,2 @@
-export { createServiceContext, defaultServiceContext, useService, useServiceInstance } from './context';
-export { Service } from './service';
+export * from './context';
+export * from './service';
