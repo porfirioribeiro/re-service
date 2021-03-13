@@ -1,7 +1,8 @@
+/* eslint-disable dot-notation, new-cap */
 import { createContext, useContext, useReducer, useEffect, useLayoutEffect } from 'react';
 
 import { Service } from './service';
-import { ServiceCtx, ServiceType, UseServiceOptions } from './types';
+import { ServiceCtx, ServiceType } from './types';
 
 const useFineEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
@@ -11,13 +12,15 @@ export function createServiceContext(): ServiceCtx {
     get services() {
       return services;
     },
-    get(serviceType, serviceName = serviceType.serviceName, initOptions) {
+    get(serviceType, key, initOptions) {
+      const serviceName = serviceType.serviceName + (key ? `_${key}` : '');
+
       return (services[serviceName] ||
-        (services[serviceName] = new serviceType({ serviceContext: this, serviceName }, initOptions))) as any;
+        (services[serviceName] = new serviceType({ serviceContext: this, key, serviceName }, initOptions))) as any;
     },
     disposeService(serviceName: string) {
       const service = services[serviceName];
-      if (service) Service.dispose(service);
+      if (service && service['disposeService']) service['disposeService']();
       delete services[serviceName];
     },
   };
@@ -36,47 +39,67 @@ const reducer = (_: any, action: any) => action;
 
 /**
  * Use the specified Service on your component
- * By default it will subscribe to changes on the Service,
- * that can be avoided by passing `{subscribe: false}`
- * The name option is used to specify what service instance to inject
- * If not specified the default `Service#serviceName` will be used and it will
- * connect to the default instance of the Service
- * This is the expected behavior most of the times
- *
- * Use `{name: 'someService'}` only if you need to use the same service
- * multiple times differently.
- *
- * Use `{disposable: true, name: 'someService'}` to make the service disposable.
- * A disposable service will be destroyed after the component unmount.
- * May be usefull to inject in a sub Provider
- * When `disposable: true` be aware that if you don't specify a name you will destroy the default instance of your service.
- * Make sure that is what you want
+ * It will subscribe to changes on the Service,
+ * The key param is used to specify what service instance to inject
+
  * @param serviceType Service class to use
- * @param options serviceName or options
+ * @param key Used to identify the service when multiple instances are used
+ * @param initOptions Is passed to Service constructed when it is initialized
  */
 export function useService<State, InitOptions, Svc extends Service<State, InitOptions>>(
-  serviceType: ServiceType<State, Svc>,
-  options?: string | UseServiceOptions<InitOptions>,
+  serviceType: ServiceType<State, InitOptions, Svc>,
+  key?: string | null,
+  initOptions?: InitOptions,
 ): Svc {
-  const opt: UseServiceOptions<InitOptions> = typeof options === 'string' ? { name: options } : options || {};
-  const serviceName = opt.name || serviceType.serviceName;
-
-  const ctx = useContext(ServiceContext);
-  const service = ctx.get(serviceType, serviceName, opt.options);
-  const s = useReducer(reducer, service.state);
-
-  useFineEffect(() => {
-    const unsubscribe = opt.subscribe !== false && service.subscribe(s[1]);
-    return () => {
-      if (unsubscribe) unsubscribe();
-      if (opt.disposable) ctx.disposeService(serviceName);
-    };
-  }, [service, opt.subscribe, opt.disposable]);
-
+  const service = useServiceCtx().get(serviceType, key, initOptions);
+  useServiceInstance(service);
   return service as Svc;
 }
 
-export function useServiceInstance<State>(service: Service<State>) {
-  const s = useReducer(reducer, service.state);
-  useFineEffect(() => service.subscribe(s[1]), [service]);
+/**
+ * Get the current ServiceContext from the context
+ */
+export function useServiceCtx() {
+  return useContext(ServiceContext);
+}
+
+/**
+ * Subscribe to a service
+ * @param service
+ */
+export function useServiceInstance<State>(service: Service<State>): State;
+/**
+ * Subscribe to a service, with a selector
+ * @param service
+ * @param selector
+ */
+export function useServiceInstance<State, R>(service: Service<State>, selector: (state: State) => R): R;
+export function useServiceInstance<State, R>(service: Service<State>, selector?: (state: State) => R): R {
+  const [state, dispatch] = selector
+    ? useReducer((_: R, a: State) => selector(a), service.state, selector)
+    : useReducer(reducer, service.state);
+  useFineEffect(() => service.subscribe(dispatch), [service]);
+  return state;
+}
+
+/**
+ * This function can be used as a `serviceLifecycle`
+ * It will dispose the service and remove it from context when the last subscriber unsubscribes
+ * Usefull for short lived services that might only be needed at a certein level of the app
+ *
+ * ```jsx
+ * class AutoDisposable extends Service<{}> {
+ *   static serviceName = 'AutoDisposableService';
+ *   serviceLifecycle = autoDispose;
+ * }
+ *
+ * function Comp(){
+ *   const service= useService(AutoDisposable);
+ * }
+ * ```
+ * As soon as Comp is unmounted, this servie will be disposed, as nobody else is using it
+ * @param this
+ */
+export function autoDispose(this: Service<any>) {
+  return () => this.serviceContext.disposeService(this.serviceName);
 }

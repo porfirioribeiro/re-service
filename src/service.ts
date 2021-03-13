@@ -2,24 +2,24 @@
 import { ServiceListener, Mutable, ServiceCtx } from './types';
 import { batch } from './batch';
 
-export type ServiceInit = { serviceContext: ServiceCtx; serviceName: string };
+export type ServiceInit = { serviceContext: ServiceCtx; key?: string | null; serviceName: string };
 
-export abstract class Service<State, InitOptions = {}> {
+export abstract class Service<State, InitOptions = any> {
   state: State;
   readonly initOptions?: InitOptions;
+  readonly key?: string | null;
   readonly serviceName: string;
   readonly serviceContext: ServiceCtx;
 
   private _listeners: ServiceListener<any>[] = [];
+  private _stop?: () => void;
 
   protected initState?(initOptions?: InitOptions): State;
   protected disposeService?(): void;
-
-  static dispose<State>(service: Service<State>) {
-    if (service.disposeService) service.disposeService();
-  }
+  protected serviceLifecycle?(): () => void;
 
   constructor(init: ServiceInit, options?: InitOptions) {
+    this.key = init.key;
     this.serviceContext = init.serviceContext;
     this.serviceName = init.serviceName;
     this.initOptions = options;
@@ -46,8 +46,13 @@ export abstract class Service<State, InitOptions = {}> {
 
   subscribe(listener: ServiceListener<State>) {
     this._listeners.push(listener);
+    if (this.serviceLifecycle && this._listeners.length === 1) this._stop = this.serviceLifecycle();
     return () => {
       this._listeners = this._listeners.filter(l => l !== listener);
+      if (this._stop && !this._listeners.length) {
+        this._stop();
+        this._stop = undefined;
+      }
     };
   }
 }
